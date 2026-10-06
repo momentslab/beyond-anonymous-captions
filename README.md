@@ -90,9 +90,9 @@ hf auth login
 hf download momentslab/beyond-anonymous-captions --repo-type dataset --local-dir data
 ```
 
-### 2. Video frames (from LSMDC / MPII-MD, not redistributed)
+### 2. Video frames (from LSMDC v2, not redistributed)
 
-We don't redistribute any video or frames. Get the source clips from [LSMDC](https://sites.google.com/site/describingmovies/) under its own license agreement, then regenerate the 8 frames per shot:
+We don't redistribute any video or frames. Download the video clips from the **LSMDC v2** section of the [LSMDC download page](https://sites.google.com/site/describingmovies/download/). Access requires an approved request (username/password) under LSMDC's own license agreement. Then regenerate the 8 frames per shot:
 
 ```bash
 python src/extract_shot_frames.py --split test --videos-root /path/to/lsmdc/data/videos
@@ -237,7 +237,7 @@ See the paper for captioning and identity-QA results.
 **Research use only. Commercial use is not permitted.**
 
 - **Code, annotations and LoRA weights:** [CC BY-NC 4.0](LICENSE), released for non-commercial research.
-- **Source videos:** LSMDC / MPII-MD, under their original license agreements. Nothing from them is redistributed here.
+- **Source videos:** [LSMDC v2](https://sites.google.com/site/describingmovies/download/) (LSMDC + MPII-MD clips), under their original license agreements. Nothing from them is redistributed here.
 - **Base models:** [Qwen3-VL](https://huggingface.co/Qwen) (Apache-2.0).
 - **Captions** were generated with Gemini 2.5 Flash and then post-processed. Their use is also subject to the provider's terms.
 
@@ -267,4 +267,4 @@ Please also cite LSMDC:
 
 ## Acknowledgements
 
-Built on [Qwen3-VL](https://github.com/QwenLM/Qwen3-VL), [PEFT](https://github.com/huggingface/peft) and the [LSMDC](https://sites.google.com/site/describingmovies/) benchmark.
+Built on [Qwen3-VL](https://github.com/QwenLM/Qwen3-VL), [PEFT](https://github.com/huggingface/peft) and the [LSMDC v2](https://sites.google.com/site/describingmovies/download/) data.
