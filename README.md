@@ -27,14 +27,14 @@ Generic video captioners say *"a man talks to a woman."* Editorial teams need *"
 - **Captioning (`cap`):** writes a single sentence that names each grounded person and adds a short visual description of them.
 - **Identity QA (`qa`):** answers questions about *who* is doing *what* in the shot.
 
-People are passed to the model as **P-indices** (`P1`, `P2`, …) tied to face coordinates (*coord_face* prompting). Names are substituted back after generation, so the model learns grounding rather than memorizing names.
-
 ## Release contents
 
 | Resource | Link | Description |
 |---|---|---|
 | Code | this repo | Inference, LoRA fine-tuning, data prep |
-| Dataset | [`momentslab/beyond-anonymous-captions`](https://huggingface.co/datasets/momentslab/beyond-anonymous-captions) ⭐ Manually annotated benchmark (750 shots, captions + identity QA), training set and clip face tracks. JSON only |
+| ⭐ Dataset: benchmark | [`shot_captions/test`](https://huggingface.co/datasets/momentslab/beyond-anonymous-captions/tree/main/shot_captions/test) | **Manually annotated.** 750 shots · 12 movies · 8 frames per shot · face boxes with actor/character · caption · 4 identity QA per shot (3,000) |
+| Dataset: train | [`shot_captions/train`](https://huggingface.co/datasets/momentslab/beyond-anonymous-captions/tree/main/shot_captions/train) | 31,958 shots · 73 movies · 8 frames per shot · face boxes with actor/character · caption |
+| Dataset: face tracks | [`clip_faces`](https://huggingface.co/datasets/momentslab/beyond-anonymous-captions/tree/main/clip_faces) | 33,996 clips (LSMDC + MPII-MD) · face boxes with actor/character and identification score on **every frame** · no captions, no QA |
 | LoRA 2B | [`momentslab/beyond-anonymous-captions-qwen3-vl-2b-lora`](https://huggingface.co/momentslab/beyond-anonymous-captions-qwen3-vl-2b-lora) | Adapter for `Qwen/Qwen3-VL-2B-Instruct` |
 | LoRA 4B | [`momentslab/beyond-anonymous-captions-qwen3-vl-4b-lora`](https://huggingface.co/momentslab/beyond-anonymous-captions-qwen3-vl-4b-lora) | Adapter for `Qwen/Qwen3-VL-4B-Instruct` |
 | LoRA 8B | [`momentslab/beyond-anonymous-captions-qwen3-vl-8b-lora`](https://huggingface.co/momentslab/beyond-anonymous-captions-qwen3-vl-8b-lora) | Adapter for `Qwen/Qwen3-VL-8B-Instruct` |
