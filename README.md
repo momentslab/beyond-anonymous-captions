@@ -12,7 +12,7 @@
 [![Models](https://img.shields.io/badge/🤗_Models-Qwen3--VL_LoRA-yellow)](https://huggingface.co/models?search=momentslab/beyond-anonymous-captions)
 [![License: CC BY-NC 4.0](https://img.shields.io/badge/License-CC_BY--NC_4.0-lightgrey.svg)](LICENSE)
 
-[Moments Lab](https://www.momentslab.com) · Research use only
+[Moments Lab](https://www.momentslab.com)
 
 </div>
 
@@ -34,7 +34,7 @@ People are passed to the model as **P-indices** (`P1`, `P2`, …) tied to face c
 | Resource | Link | Description |
 |---|---|---|
 | Code | this repo | Inference, LoRA fine-tuning, data prep |
-| Dataset | [`momentslab/beyond-anonymous-captions`](https://huggingface.co/datasets/momentslab/beyond-anonymous-captions) | JSON annotations only (no video, no frames) |
+| Dataset | [`momentslab/beyond-anonymous-captions`](https://huggingface.co/datasets/momentslab/beyond-anonymous-captions) ⭐ Manually annotated benchmark (750 shots, captions + identity QA), training set and clip face tracks. JSON only |
 | LoRA 2B | [`momentslab/beyond-anonymous-captions-qwen3-vl-2b-lora`](https://huggingface.co/momentslab/beyond-anonymous-captions-qwen3-vl-2b-lora) | Adapter for `Qwen/Qwen3-VL-2B-Instruct` |
 | LoRA 4B | [`momentslab/beyond-anonymous-captions-qwen3-vl-4b-lora`](https://huggingface.co/momentslab/beyond-anonymous-captions-qwen3-vl-4b-lora) | Adapter for `Qwen/Qwen3-VL-4B-Instruct` |
 | LoRA 8B | [`momentslab/beyond-anonymous-captions-qwen3-vl-8b-lora`](https://huggingface.co/momentslab/beyond-anonymous-captions-qwen3-vl-8b-lora) | Adapter for `Qwen/Qwen3-VL-8B-Instruct` |
@@ -104,36 +104,55 @@ python src/extract_shot_frames.py --split train --videos-root /path/to/lsmdc/dat
 
 You can also set `LSMDC_VIDEOS_ROOT` instead of passing `--videos-root`. This writes `frames/frame{X}.jpg`, `frames/frame{X}_bbox.jpg` and `frames/sequence.jpg` inside each `shot{N}/` folder.
 
-### Dataset layout
+### What's in the dataset
+
+| Subset | Size | Content |
+|---|---|---|
+| ⭐ **BAC benchmark** (`shot_captions/test`) | **750 shots** · 708 clips · 12 movies | **Manually annotated.** 8 frames per shot with identity-grounded face boxes, a caption naming every character, and **4 identity questions with answers** per shot (3,000 QA pairs) |
+| Training set (`shot_captions/train`) | 31,958 shots · 73 movies | 8 sampled frames per shot with identity-grounded face boxes and a caption naming every character |
+| Clip face tracks (`clip_faces`) | 33,996 clips (LSMDC 17,584 · MPII-MD 16,412) | Face boxes with identities on **every frame** of each clip. **No captions.** For anyone who only needs identity-labelled face tracks |
 
 ```
 data/
 ├── shot_captions/
-│   ├── train/{movie}/{clip}/shot{N}/input_sequence.json   # 31,959 shots, 73 movies
-│   └── test/{movie}/{clip}/shot{N}/input_sequence.json    #    750 shots, 12 movies
-├── clip_faces/
-│   ├── lsmdc/{MOVIE}/{clip}.json                          # 17,584 clips
-│   └── mpiimd/{MOVIE}/{clip}.json                         # 16,412 clips
-├── finetune/train_manifest.jsonl                          # 19,265 training samples
+│   ├── test/{movie}/{clip}/shot{N}/input_sequence.json    # ⭐ benchmark
+│   └── train/{movie}/{clip}/shot{N}/input_sequence.json   # training set
+├── clip_faces/{lsmdc,mpiimd}/{MOVIE}/{clip}.json          # face tracks on every frame
 └── train_test_split/{train,test}.txt                      # movie-level split
 ```
 
-The train and test splits are **disjoint at the movie level**.
+Train and benchmark are **disjoint at the movie level**.
 
-**`shot_captions/*/input_sequence.json`**: one shot, 8 sampled frames:
+### ⭐ The BAC benchmark
+
+`shot_captions/test` is the **reference benchmark** for identity-aware captioning and identity QA. Each shot has 8 frames with face boxes, actors and characters; one manually annotated caption; and 4 *who* questions (appearance, action, interaction, position, object, posture). Each answer is an actor name, or `UNIDENTIFIED` when the person isn't one of the identified characters.
+
+```json
+{
+  "caption": "Elliot Page, wearing a patterned collared shirt, receives a folded drawing passed across desks in a classroom, unfolds it, and smiles while reading the note.",
+  "questions": [
+    {"id": "Q1", "type": "appearance",  "question": "Who is wearing a patterned collared shirt?", "answer": "Elliot Page", "ok": true},
+    {"id": "Q4", "type": "interaction", "question": "Who passes the folded drawing to Elliot Page?", "answer": "UNIDENTIFIED", "ok": true}
+  ]
+}
+```
+
+### Fields
+
+**`shot_captions/*/input_sequence.json`**: one shot, 8 sampled frames. The benchmark files are the reference schema; training files have the same fields without `questions`.
 
 | Field | Description |
 |---|---|
-| `movie`, `source_clip`, `dataset` | Source identifiers (`lsmdc` / `mpiimd`) |
-| `shot_index`, `shot_start_second`, `shot_end_second` | Shot boundaries inside the clip |
-| `fps`, `frame_width`, `frame_height` | Video metadata |
-| `caption_pre` | Target caption with P-indices (`"P1, with curly blonde hair, …"`); train only |
-| `caption` | Same caption with actor names substituted |
-| `p_to_full` | `{"P1": "Actor Name", …}` |
-| `questions` | Identity QA items; test only |
-| `frames[]` | `frame_index`, `timestamp`, `persons[]` → `actor`, `character`, `bbox` (face, xyxy px), `track_id`, `ident_score` |
+| `movie`, `source_clip`, `dataset`, `video` | Source identifiers (`dataset` = `lsmdc` or `mpiimd`) |
+| `shot_index`, `shot_start_second`, `shot_end_second` | Shot position inside the clip |
+| `fps`, `frame_width`, `frame_height`, `total_video_frames` | Source video metadata |
+| `caption` | Caption naming every identified person |
+| `questions[]` | *Benchmark only.* `id`, `type`, `question`, `answer`, `ok` |
+| `frames[]` | `frame_order`, `frame_index`, `timestamp`, `persons[]` → `actor`, `character`, `bbox` (face, `[x1, y1, x2, y2]` px), `track_id`, `ident_score` |
 
-**`clip_faces/*.json`**: per-frame face tracks for each clip (`sampled_frames[].faces[]` → `track_id`, `bbox`, `name` (character), `actor`, `score`).
+**`clip_faces/*.json`**: face tracks on every frame of the clip (`sampled_frames[].faces[]` → `track_id`, `bbox`, `name` (character), `actor`, `score`).
+
+**`score` / `ident_score` is the identification confidence**: how sure the pipeline is that the face belongs to that character/actor. Higher means more confident. Scores range from 0.30 (the minimum kept) to about 0.97. Raise the cut-off to trade coverage for precision.
 
 ## Model weights
 
@@ -158,7 +177,7 @@ processor = AutoProcessor.from_pretrained("momentslab/beyond-anonymous-captions-
 
 ## Inference
 
-Run on the test split (`data/shot_captions/test`):
+Run on the ⭐ BAC benchmark (`data/shot_captions/test`):
 
 ```bash
 python scripts/run.py cap --size 8b --lora auto
@@ -190,7 +209,7 @@ python scripts/train.py --size 8b
 python scripts/train.py --size 2b --eval --eval_ratio 0.1
 ```
 
-The manifests are built from `data/shot_captions/train` on first run (or with `--prepare`). Default hyperparameters (`src/config.py`):
+Training manifests are built from `data/shot_captions/train` on the first run (or with `--prepare`). Default hyperparameters (`src/config.py`):
 
 | | |
 |---|---|
