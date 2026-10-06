@@ -1,0 +1,21 @@
+# environments
+.venv/
+__pycache__/
+*.pyc
+
+# data & weights live on Hugging Face
+data/
+models/
+output/
+outputs/
+runs/
+null_remove/
+*.jpg
+*.png
+*.avi
+*.mp4
+*.safetensors
+
+# internal
+PUBLISHING_PLAN.md
+hf_cards/

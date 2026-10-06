@@ -1,0 +1,14 @@
+BAC: Beyond Anonymous Captions
+Copyright (c) 2026 Moments Lab
+
+Code, annotations and LoRA adapter weights are released under the
+Creative Commons Attribution-NonCommercial 4.0 International license
+(CC BY-NC 4.0, see LICENSE) for non-commercial research use only.
+Commercial use is not permitted.
+
+Third-party components and terms:
+- Source videos: LSMDC / MPII Movie Description datasets. Not redistributed.
+  Use is governed by their own research-only license agreements.
+- Base models: Qwen3-VL (Qwen/Qwen3-VL-{2B,4B,8B}-Instruct), Apache License 2.0.
+- Captions were generated with Google Gemini 2.5 Flash and post-processed;
+  their use is also subject to the provider's terms.

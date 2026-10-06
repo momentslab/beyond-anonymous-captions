@@ -1,0 +1,32 @@
+# ICLR — identity-aware video captioning & QA
+# Install:  pip install -r ICLR/requirements.txt
+
+# ----- core -----
+torch>=2.4
+torchvision>=0.19
+torchaudio>=2.4
+transformers>=4.45
+accelerate>=1.0
+safetensors>=0.4
+huggingface_hub>=0.26
+
+# ----- Qwen3-VL -----
+qwen-vl-utils>=0.0.10
+
+# ----- LoRA -----
+peft>=0.12
+
+# ----- vision / data -----
+opencv-python-headless>=4.8
+numpy>=1.24
+pillow>=10.0
+
+# ----- scoring -----
+scipy>=1.10
+
+# ----- training -----
+matplotlib>=3.7
+tensorboard>=2.14
+
+# ----- misc -----
+tqdm>=4.60
