@@ -9,7 +9,7 @@
 <!-- TODO: replace with final paper link once public -->
 [![Paper](https://img.shields.io/badge/Paper-coming_soon-lightgrey)](#citation)
 [![Dataset](https://img.shields.io/badge/🤗_Dataset-beyond--anonymous--captions-yellow)](https://huggingface.co/datasets/momentslab/beyond-anonymous-captions)
-[![Models](https://img.shields.io/badge/🤗_Models-Qwen3--VL_LoRA-yellow)](https://huggingface.co/collections/momentslab/beyond-anonymous-captions)
+[![Models](https://img.shields.io/badge/🤗_Models-Qwen3--VL_LoRA-yellow)](https://huggingface.co/models?search=momentslab/beyond-anonymous-captions)
 [![License: CC BY-NC 4.0](https://img.shields.io/badge/License-CC_BY--NC_4.0-lightgrey.svg)](LICENSE)
 
 [Moments Lab](https://www.momentslab.com) · Research use only
