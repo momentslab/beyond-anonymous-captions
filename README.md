@@ -179,8 +179,7 @@ python src/render_clip_video.py --dataset lsmdc --movie 21_JUMP_STREET --limit 3
 Output: one video per clip at `output/videos/clip_faces/{MOVIE}/{clip}_bbox.mp4` (change it with `--output-dir`).
 
 - The **full clip**, at the source resolution and frame rate (every frame, not just 8).
-- Every face listed in the JSON is boxed and labelled **"Character Name score"**, one color per character. Frames with no face are left unchanged.
-- Clips with no face at all are skipped.
+- Every face listed in the JSON is boxed and labelled **"Character Name score"**, one color per character.
 
 `--movie` takes the folder name used in `clip_faces` (e.g. `21_JUMP_STREET`, no numeric prefix). Without `--clip`, `--dataset` or `--movie`, it renders all 33,996 clips.
 
