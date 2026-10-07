@@ -105,7 +105,10 @@ hf download momentslab/beyond-anonymous-captions --repo-type dataset --local-dir
 
 ### 2. Videos (from LSMDC v2, not redistributed)
 
-We don't redistribute any video or frames. Download the video clips from the **LSMDC v2** section of the [LSMDC download page](https://sites.google.com/site/describingmovies/download/). Access requires an approved request (username/password) under LSMDC's own license agreement.
+We don't redistribute any video or frames. To get the source clips:
+
+1. **Ask for permission:** request access to the [MPII Movie Description dataset (MPII-MD)](https://moviedescreg.mpi-inf.mpg.de/register.php), as described in the *Dataset download* section of the LSMDC page. Once approved, you receive a username/password, and the data is used under LSMDC's own license agreement.
+2. **Download the video clips** from the **LSMDC v2** section of the [LSMDC download page](https://sites.google.com/site/describingmovies/download/) with those credentials.
 
 Put the clips under `./data/videos/`, keeping the LSMDC v2 layout (one folder per source, one folder per movie):
 
