@@ -198,14 +198,14 @@ def _shot_done(images_dir: Path) -> bool:
 
 def process_clip(clip_dir: Path, output_dir: Path) -> int:
     clip = clip_dir.name
-    shot_jsons = sorted(output_dir.glob("shot*/input_sequence.json"))
+    shot_jsons = sorted(clip_dir.glob("shot*/input_sequence.json"))
     if not shot_jsons:
         return 0
 
     pending = []
     done = 0
     for shot_path in shot_jsons:
-        images_dir = shot_path.parent / "frames"
+        images_dir = output_dir / shot_path.parent.name / "frames"
         if _shot_done(images_dir):
             done += 1
         else:
@@ -270,7 +270,7 @@ def main() -> int:
     )
     parser.add_argument(
         "--output-dir", type=Path, default=None,
-        help="Flat output root. Default writes inside each clip folder.",
+        help="Write frames to {output-dir}/{movie}/{clip}/shot{N}/frames/ instead of inside each clip folder.",
     )
     args = parser.parse_args()
     global VIDEOS_ROOT
@@ -297,7 +297,7 @@ def main() -> int:
 
     total_shots = 0
     for clip_dir in clip_dirs:
-        out = args.output_dir or clip_dir
+        out = args.output_dir / clip_dir.parent.name / clip_dir.name if args.output_dir else clip_dir
         total_shots += process_clip(clip_dir, out)
 
     print(f"\nDone. Extracted {total_shots} shots")

@@ -65,6 +65,7 @@
 │   ├── config.py              # model presets, generation + LoRA hyperparameters
 │   ├── prompts.py             # captioning / QA prompt templates
 │   ├── extract_shot_frames.py # extract the 8 frames per shot from source videos
+│   ├── render_clip_video.py   # draw clip_faces tracks on the full clips (mp4)
 │   ├── grounding/             # prompt building, frame annotation, batched generation
 │   ├── finetune/              # dataset, collator, LoRA setup
 │   └── utils/                 # bbox, names, QA parsing, text cleanup
@@ -122,7 +123,27 @@ data/videos/
         └── 0001_American_Beauty_00.00.51.926-00.00.54.129.avi
 ```
 
-This matches the `video` path stored in every annotation file (`data/videos/{lsmdc,mpiimd}/{movie}/{clip}.avi`). Then regenerate the 8 frames per shot:
+This matches the `video` path stored in every annotation file (`data/videos/{lsmdc,mpiimd}/{movie}/{clip}.avi`).
+
+### 3. Data layout
+
+After steps 1 and 2, `data/` looks like this:
+
+```
+data/
+├── shot_captions/
+│   ├── test/{movie}/{clip}/shot{N}/input_sequence.json    # BAC benchmark
+│   └── train/{movie}/{clip}/shot{N}/input_sequence.json   # training set
+├── clip_faces/{lsmdc,mpiimd}/{MOVIE}/{clip}.json          # face tracks on every frame
+├── train_test_split/{train,test}.txt                      # movie-level split
+└── videos/{lsmdc,mpiimd}/{movie}/{clip}.avi               # from LSMDC v2 (step 2)
+```
+
+Train and benchmark are **disjoint at the movie level**. Steps 4 and 5 below are independent of each other: run the one(s) you need. If your videos live somewhere other than `data/videos/`, pass `--videos-root /path/to/videos` (or set `LSMDC_VIDEOS_ROOT`) to either script.
+
+### 4. Extract the 8 frames per shot (`shot_captions`)
+
+Needed for inference and training.
 
 ```bash
 python src/extract_shot_frames.py --split test
@@ -132,23 +153,38 @@ python src/extract_shot_frames.py --split test
 python src/extract_shot_frames.py --split train
 ```
 
-This writes `frames/frame{X}.jpg`, `frames/frame{X}_bbox.jpg` and `frames/sequence.jpg` inside each `shot{N}/` folder. If your videos live somewhere else, pass `--videos-root /path/to/videos` (or set `LSMDC_VIDEOS_ROOT`).
-
-### Data layout
+For every shot, this reads the 8 frame indices from `input_sequence.json`, grabs those frames from the source clip and writes them next to the JSON:
 
 ```
-data/
-├── shot_captions/
-│   ├── test/{movie}/{clip}/shot{N}/input_sequence.json    # BAC benchmark
-│   └── train/{movie}/{clip}/shot{N}/input_sequence.json   # training set
-├── clip_faces/{lsmdc,mpiimd}/{MOVIE}/{clip}.json          # face tracks on every frame
-├── train_test_split/{train,test}.txt                      # movie-level split
-└── videos/{lsmdc,mpiimd}/{movie}/{clip}.avi               # from LSMDC v2 (you download)
+shot_captions/{split}/{movie}/{clip}/shot{N}/frames/
+├── frame{X}.jpg        # raw frame, X = frame index in the clip (8 per shot)
+├── frame{X}_bbox.jpg   # same frame with each face box labelled "Actor Name score"
+└── sequence.jpg        # the 8 annotated frames in one 2×4 grid (like the overview figure)
 ```
 
-Train and benchmark are **disjoint at the movie level**.
+Shots that already have a `sequence.jpg` are skipped, so you can stop and resume. Use `--clips <clip names>` to process only some clips, or `--output-dir DIR` to write the frames to `DIR/{movie}/{clip}/shot{N}/frames/` instead.
 
-### The BAC benchmark
+### 5. Render face tracks on the clips (`clip_faces`, optional)
+
+To see the `clip_faces` annotations on the videos, draw them on every frame of a clip:
+
+```bash
+python src/render_clip_video.py --clip 3001_21_JUMP_STREET_01.16.35.129-01.16.37.251
+```
+
+```bash
+python src/render_clip_video.py --dataset lsmdc --movie 21_JUMP_STREET --limit 3
+```
+
+Output: one video per clip at `output/videos/clip_faces/{MOVIE}/{clip}_bbox.mp4` (change it with `--output-dir`).
+
+- The **full clip**, at the source resolution and frame rate (every frame, not just 8).
+- Every face listed in the JSON is boxed and labelled **"Character Name score"**, one color per character. Frames with no face are left unchanged.
+- Clips with no face at all are skipped.
+
+`--movie` takes the folder name used in `clip_faces` (e.g. `21_JUMP_STREET`, no numeric prefix). Without `--clip`, `--dataset` or `--movie`, it renders all 33,996 clips.
+
+## The BAC benchmark
 
 `shot_captions/test` is the **reference benchmark** for identity-aware captioning and identity QA. Each shot has 8 frames with face boxes, actors and characters; one manually annotated caption; and 4 *who* questions (appearance, action, interaction, position, object, posture). Each answer is an actor name, or `UNIDENTIFIED` when the person isn't one of the identified characters.
 
@@ -162,7 +198,7 @@ Train and benchmark are **disjoint at the movie level**.
 }
 ```
 
-### Fields
+## Annotation fields
 
 **`shot_captions/*/input_sequence.json`**: one shot, 8 sampled frames. The benchmark files are the reference schema; training files have the same fields without `questions`.
 

@@ -52,8 +52,14 @@ def color_for(name: str, table: dict) -> tuple:
     return table[name]
 
 
-def find_video(dataset: str, movie: str, clip: str) -> Path | None:
-    """Look for the video in the expected location."""
+def find_video(dataset: str, movie: str, clip: str, hint: str | None = None) -> Path | None:
+    """Look for the video: JSON ``video`` path first, then the expected location."""
+    if hint:
+        hint = hint.removeprefix("./")
+        rel = hint[len("data/videos/"):] if hint.startswith("data/videos/") else hint
+        candidate = VIDEOS_ROOT / rel
+        if candidate.exists():
+            return candidate
     direct = VIDEOS_ROOT / dataset / movie / f"{clip}.avi"
     if direct.exists():
         return direct
@@ -96,7 +102,7 @@ def render_clip(clip_json: Path, dataset: str, movie: str, output_dir: Path) -> 
         print(f"  - {clip}: no faces at all, skipping")
         return None
 
-    video_path = find_video(dataset, movie, clip)
+    video_path = find_video(dataset, movie, clip, data.get("video"))
     if video_path is None:
         print(f"  x video not found for {clip}")
         return None
@@ -164,9 +170,14 @@ examples:
                         help="Render a single clip by name (searches all datasets)")
     parser.add_argument("--limit", type=int, default=None,
                         help="Process only first N clips")
+    parser.add_argument("--videos-root", type=Path, default=None,
+                        help="LSMDC/MPII-MD videos root (default: $LSMDC_VIDEOS_ROOT or data/videos)")
     parser.add_argument("--output-dir", type=Path, default=None,
                         help="Output dir (default: output/videos/clip_faces)")
     args = parser.parse_args()
+    global VIDEOS_ROOT
+    if args.videos_root:
+        VIDEOS_ROOT = args.videos_root
 
     output_dir = args.output_dir or (ROOT / "output" / "videos" / "clip_faces")
 
