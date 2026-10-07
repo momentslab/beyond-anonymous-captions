@@ -20,12 +20,29 @@
 
 ## Overview
 
-Generic video captioners say *"a man talks to a woman."* Editorial teams need *"Amanda Bynes, in a salmon shirt, turns to Aly Michalka."*
-
 **BAC** (*Beyond Anonymous Captions*) has the code, data and LoRA adapters for **identity-grounded video understanding**. Given sampled frames from a movie shot plus face-grounded identities, a Qwen3-VL model:
 
 - **Captioning (`cap`):** writes a single sentence that names each grounded person and adds a short visual description of them.
 - **Identity QA (`qa`):** answers questions about *who* is doing *what* in the shot.
+
+<p align="center">
+  <img src="assets/bac_example.jpg" alt="8 sampled frames of a shot with identity-grounded face boxes P1, P2 and P3" width="100%">
+</p>
+
+**Identity mapping:** $\color{green}\textbf{P1}$ ↔ $\color{green}\text{Cam Gigandet}$ · $\color{magenta}\textbf{P2}$ ↔ $\color{magenta}\text{Minka Kelly}$ · $\color{blue}\textbf{P3}$ ↔ $\color{blue}\text{Leighton Meester}$
+
+**Caption:** $\color{green}\text{Cam Gigandet}$, in a green shirt, and $\color{magenta}\text{Minka Kelly}$, in a red top, stand close together and share a kiss while $\color{blue}\text{Leighton Meester}$, in the car, watches.
+
+**Person-centric QA:**
+
+| Question | Type | Answer |
+|---|---|---|
+| *Who is in the car?* | Position | $\color{blue}\text{Leighton Meester}$ |
+| *Who is kissing* $\color{magenta}\text{Minka Kelly?}$ | Interaction | $\color{green}\text{Cam Gigandet}$ |
+| *Who is wearing a green shirt?* | Appearance | $\color{green}\text{Cam Gigandet}$ |
+| *Who is wearing a red top?* | Appearance | $\color{magenta}\text{Minka Kelly}$ |
+
+<p align="center"><i>Identity-aware captioning and person-centric QA, with character identities grounded across the 8 sampled frames of a shot.</i></p>
 
 ## Release contents
 
@@ -33,7 +50,7 @@ Generic video captioners say *"a man talks to a woman."* Editorial teams need *"
 |---|---|---|
 | Code | this repo | Inference, LoRA fine-tuning, data prep |
 | ⭐ Dataset: benchmark | [`shot_captions/test`](https://huggingface.co/datasets/momentslab/beyond-anonymous-captions/tree/main/shot_captions/test) | **Manually annotated.** 750 shots · 12 movies · 8 frames per shot · face boxes with actor/character · caption · 4 identity QA per shot (3,000) |
-| Dataset: train | [`shot_captions/train`](https://huggingface.co/datasets/momentslab/beyond-anonymous-captions/tree/main/shot_captions/train) | 31,958 shots · 73 movies · 8 frames per shot · face boxes with actor/character · caption |
+| Dataset: train | [`shot_captions/train`](https://huggingface.co/datasets/momentslab/beyond-anonymous-captions/tree/main/shot_captions/train) | 31,935 shots · 72 movies · 8 frames per shot · face boxes with actor/character · caption |
 | Dataset: face tracks | [`clip_faces`](https://huggingface.co/datasets/momentslab/beyond-anonymous-captions/tree/main/clip_faces) | 33,996 clips (LSMDC + MPII-MD) · face boxes with actor/character and identification score on **every frame** · no captions, no QA |
 | Models: LoRA adapters | [`momentslab/beyond-anonymous-captions`](https://huggingface.co/momentslab/beyond-anonymous-captions) | One repo, one subfolder per size: [`2b/`](https://huggingface.co/momentslab/beyond-anonymous-captions/tree/main/2b), [`4b/`](https://huggingface.co/momentslab/beyond-anonymous-captions/tree/main/4b), [`8b/`](https://huggingface.co/momentslab/beyond-anonymous-captions/tree/main/8b) for Qwen3-VL-2B/4B/8B-Instruct |
 

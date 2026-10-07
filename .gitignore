@@ -11,6 +11,7 @@ outputs/
 runs/
 null_remove/
 *.jpg
+!assets/*.jpg
 *.png
 *.avi
 *.mp4
