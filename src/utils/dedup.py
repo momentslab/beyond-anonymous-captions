@@ -12,7 +12,7 @@ def deduplicate_mirror_bboxes(input_data: Dict) -> Dict:
     Remove duplicate bounding boxes caused by mirror reflections.
 
     When the same actor has multiple bboxes in the same frame (different track_ids),
-    keep only the track with the highest average ident_score across all frames.
+    keep only the track with the highest average identification score across all frames.
 
     Only applies when an actor has >1 bbox in at least one frame.
     Returns a new dict with filtered persons (does not mutate the input).
@@ -24,7 +24,7 @@ def deduplicate_mirror_bboxes(input_data: Dict) -> Dict:
     first_person = next(
         (p for f in frames for p in f.get("persons", [])), None
     )
-    if first_person is None or "ident_score" not in first_person or "track_id" not in first_person:
+    if first_person is None or "score" not in first_person or "track_id" not in first_person:
         return input_data
 
     actors_with_duplicates = set()
@@ -47,7 +47,7 @@ def deduplicate_mirror_bboxes(input_data: Dict) -> Dict:
             actor = person.get("actor")
             if actor in actors_with_duplicates:
                 track_id = person.get("track_id")
-                score = person.get("ident_score", 0.0)
+                score = person.get("score", 0.0)
                 if track_id is not None:
                     actor_track_scores[actor][track_id].append(score)
 

@@ -51,6 +51,7 @@ def color_for(name: str, table: dict) -> tuple:
 
 def find_video(clip: str, hint: str | None = None) -> Path | None:
     if hint:
+        hint = hint.removeprefix("./")
         rel = hint[len("data/videos/"):] if hint.startswith("data/videos/") else hint
         candidate = VIDEOS_ROOT / rel
         if candidate.exists():
@@ -167,7 +168,7 @@ def extract_shot(
         frame_bbox = frame.copy()
         for person in persons:
             actor = person.get("actor") or person.get("character") or "Unknown"
-            score = person.get("ident_score", person.get("score"))
+            score = person.get("score", person.get("ident_score"))
             label = f"{actor} {score:.2f}" if isinstance(score, (int, float)) else actor
             draw_person(frame_bbox, person["bbox"], label, color_for(actor, color_table))
             total_faces += 1

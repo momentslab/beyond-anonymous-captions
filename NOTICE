@@ -11,5 +11,3 @@ Third-party components and terms:
   Not redistributed.
   Use is governed by their own research-only license agreements.
 - Base models: Qwen3-VL (Qwen/Qwen3-VL-{2B,4B,8B}-Instruct), Apache License 2.0.
-- Captions were generated with Google Gemini 2.5 Flash and post-processed;
-  their use is also subject to the provider's terms.

@@ -90,40 +90,49 @@ hf auth login
 hf download momentslab/beyond-anonymous-captions --repo-type dataset --local-dir data
 ```
 
-### 2. Video frames (from LSMDC v2, not redistributed)
+### 2. Videos (from LSMDC v2, not redistributed)
 
-We don't redistribute any video or frames. Download the video clips from the **LSMDC v2** section of the [LSMDC download page](https://sites.google.com/site/describingmovies/download/). Access requires an approved request (username/password) under LSMDC's own license agreement. Then regenerate the 8 frames per shot:
+We don't redistribute any video or frames. Download the video clips from the **LSMDC v2** section of the [LSMDC download page](https://sites.google.com/site/describingmovies/download/). Access requires an approved request (username/password) under LSMDC's own license agreement.
+
+Put the clips under `./data/videos/`, keeping the LSMDC v2 layout (one folder per source, one folder per movie):
+
+```
+data/videos/
+├── lsmdc/
+│   └── 3001_21_JUMP_STREET/
+│       └── 3001_21_JUMP_STREET_01.16.35.129-01.16.37.251.avi
+└── mpiimd/
+    └── 0001_American_Beauty/
+        └── 0001_American_Beauty_00.00.51.926-00.00.54.129.avi
+```
+
+This matches the `video` path stored in every annotation file (`data/videos/{lsmdc,mpiimd}/{movie}/{clip}.avi`). Then regenerate the 8 frames per shot:
 
 ```bash
-python src/extract_shot_frames.py --split test --videos-root /path/to/lsmdc/data/videos
+python src/extract_shot_frames.py --split test
 ```
 
 ```bash
-python src/extract_shot_frames.py --split train --videos-root /path/to/lsmdc/data/videos
+python src/extract_shot_frames.py --split train
 ```
 
-You can also set `LSMDC_VIDEOS_ROOT` instead of passing `--videos-root`. This writes `frames/frame{X}.jpg`, `frames/frame{X}_bbox.jpg` and `frames/sequence.jpg` inside each `shot{N}/` folder.
+This writes `frames/frame{X}.jpg`, `frames/frame{X}_bbox.jpg` and `frames/sequence.jpg` inside each `shot{N}/` folder. If your videos live somewhere else, pass `--videos-root /path/to/videos` (or set `LSMDC_VIDEOS_ROOT`).
 
-### What's in the dataset
-
-| Subset | Size | Content |
-|---|---|---|
-| ⭐ **BAC benchmark** (`shot_captions/test`) | **750 shots** · 708 clips · 12 movies | **Manually annotated.** 8 frames per shot with identity-grounded face boxes, a caption naming every character, and **4 identity questions with answers** per shot (3,000 QA pairs) |
-| Training set (`shot_captions/train`) | 31,958 shots · 73 movies | 8 sampled frames per shot with identity-grounded face boxes and a caption naming every character |
-| Clip face tracks (`clip_faces`) | 33,996 clips (LSMDC 17,584 · MPII-MD 16,412) | Face boxes with identities on **every frame** of each clip. **No captions.** For anyone who only needs identity-labelled face tracks |
+### Data layout
 
 ```
 data/
 ├── shot_captions/
-│   ├── test/{movie}/{clip}/shot{N}/input_sequence.json    # ⭐ benchmark
+│   ├── test/{movie}/{clip}/shot{N}/input_sequence.json    # BAC benchmark
 │   └── train/{movie}/{clip}/shot{N}/input_sequence.json   # training set
 ├── clip_faces/{lsmdc,mpiimd}/{MOVIE}/{clip}.json          # face tracks on every frame
-└── train_test_split/{train,test}.txt                      # movie-level split
+├── train_test_split/{train,test}.txt                      # movie-level split
+└── videos/{lsmdc,mpiimd}/{movie}/{clip}.avi               # from LSMDC v2 (you download)
 ```
 
 Train and benchmark are **disjoint at the movie level**.
 
-### ⭐ The BAC benchmark
+### The BAC benchmark
 
 `shot_captions/test` is the **reference benchmark** for identity-aware captioning and identity QA. Each shot has 8 frames with face boxes, actors and characters; one manually annotated caption; and 4 *who* questions (appearance, action, interaction, position, object, posture). Each answer is an actor name, or `UNIDENTIFIED` when the person isn't one of the identified characters.
 
@@ -148,11 +157,11 @@ Train and benchmark are **disjoint at the movie level**.
 | `fps`, `frame_width`, `frame_height`, `total_video_frames` | Source video metadata |
 | `caption` | Caption naming every identified person |
 | `questions[]` | *Benchmark only.* `id`, `type`, `question`, `answer`, `ok` |
-| `frames[]` | `frame_order`, `frame_index`, `timestamp`, `persons[]` → `actor`, `character`, `bbox` (face, `[x1, y1, x2, y2]` px), `track_id`, `ident_score` |
+| `frames[]` | `frame_order`, `frame_index`, `timestamp`, `persons[]` → `actor`, `character`, `bbox` (face, `[x1, y1, x2, y2]` px), `track_id`, `score` |
 
 **`clip_faces/*.json`**: face tracks on every frame of the clip (`sampled_frames[].faces[]` → `track_id`, `bbox`, `name` (character), `actor`, `score`).
 
-**`score` / `ident_score` is the identification confidence**: how sure the pipeline is that the face belongs to that character/actor. Higher means more confident. Scores range from 0.30 (the minimum kept) to about 0.97. Raise the cut-off to trade coverage for precision.
+**`score` is the identification confidence**: how sure the pipeline is that the face belongs to that character/actor. Higher means more confident. Scores range from 0.30 (the minimum kept) to about 0.97. Raise the cut-off to trade coverage for precision.
 
 ## Model weights
 
@@ -177,7 +186,7 @@ processor = AutoProcessor.from_pretrained("momentslab/beyond-anonymous-captions-
 
 ## Inference
 
-Run on the ⭐ BAC benchmark (`data/shot_captions/test`):
+Run on the BAC benchmark (`data/shot_captions/test`):
 
 ```bash
 python scripts/run.py cap --size 8b --lora auto
@@ -239,7 +248,6 @@ See the paper for captioning and identity-QA results.
 - **Code, annotations and LoRA weights:** [CC BY-NC 4.0](LICENSE), released for non-commercial research.
 - **Source videos:** [LSMDC v2](https://sites.google.com/site/describingmovies/download/) (LSMDC + MPII-MD clips), under their original license agreements. Nothing from them is redistributed here.
 - **Base models:** [Qwen3-VL](https://huggingface.co/Qwen) (Apache-2.0).
-- **Captions** were generated with Gemini 2.5 Flash and then post-processed. Their use is also subject to the provider's terms.
 
 The annotations include the names of publicly credited actors and characters, tied to face bounding boxes in commercial films. Don't use this release to identify people outside that context, for surveillance, or to build face-recognition systems.
 
@@ -251,17 +259,6 @@ The annotations include the names of publicly credited actors and characters, ti
   author = {TODO},
   year   = {2026},
   note   = {TODO: venue / arXiv id}
-}
-```
-
-Please also cite LSMDC:
-
-```bibtex
-@article{lsmdc,
-  title   = {Movie Description},
-  author  = {Rohrbach, Anna and Torabi, Atousa and Rohrbach, Marcus and Tandon, Niket and Pal, Christopher and Larochelle, Hugo and Courville, Aaron and Schiele, Bernt},
-  journal = {International Journal of Computer Vision},
-  year    = {2017}
 }
 ```
 
