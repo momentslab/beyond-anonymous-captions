@@ -22,7 +22,7 @@
 
 **BAC** (*Beyond Anonymous Captions*) has the code, data and LoRA adapters for **identity-grounded video understanding**. Given sampled frames from a movie shot plus face-grounded identities, a Qwen3-VL model:
 
-- **Captioning (`cap`):** writes a single sentence that names each grounded person and adds a short visual description of them.
+- **Captioning (`cap`):** writes a caption that names each grounded person and adds a short visual description of them.
 - **Identity QA (`qa`):** answers questions about *who* is doing *what* in the shot.
 
 <p align="center">
@@ -41,8 +41,6 @@
 | *Who is kissing* $\color{magenta}\text{Minka Kelly?}$ | Interaction | $\color{green}\text{Cam Gigandet}$ |
 | *Who is wearing a green shirt?* | Appearance | $\color{green}\text{Cam Gigandet}$ |
 | *Who is wearing a red top?* | Appearance | $\color{magenta}\text{Minka Kelly}$ |
-
-<p align="center"><i>Identity-aware captioning and person-centric QA, with character identities grounded across the 8 sampled frames of a shot.</i></p>
 
 ## Release contents
 
