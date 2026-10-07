@@ -263,9 +263,21 @@ Outputs are written per shot as `result_caption_coord_face.json` / `result_ident
 
 ## Training
 
+`train.py` takes the **Qwen3-VL Instruct base model** of the size you choose and fine-tunes it with **LoRA** on the BAC training set (`data/shot_captions/train`, 8 frames per shot, see step 4 of [Getting the data](#getting-the-data)):
+
+| `--size` | Base model |
+|---|---|
+| `2b` | [`Qwen/Qwen3-VL-2B-Instruct`](https://huggingface.co/Qwen/Qwen3-VL-2B-Instruct) |
+| `4b` | [`Qwen/Qwen3-VL-4B-Instruct`](https://huggingface.co/Qwen/Qwen3-VL-4B-Instruct) |
+| `8b` | [`Qwen/Qwen3-VL-8B-Instruct`](https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct) |
+
+The base weights are downloaded from Hugging Face and kept frozen; only the small LoRA adapter is trained.
+
 ```bash
 python scripts/train.py --size 8b
 ```
+
+To hold out 10 % of the training shots for evaluation and keep the best checkpoint:
 
 ```bash
 python scripts/train.py --size 2b --eval --eval_ratio 0.1
@@ -281,13 +293,17 @@ Training manifests are built from `data/shot_captions/train` on the first run (o
 | Schedule | 1 epoch, seed 42 |
 | Frames | 8 per shot, 131k–524k pixels per image |
 
-Released checkpoints: best by eval loss at step 1600.
+Outputs go to `models/finetune/{size}/` (change with `--output_dir`):
 
-| Size | Best eval loss |
-|---|---|
-| 2B | 0.921 |
-| 4B | 0.857 |
-| 8B | 0.836 |
+- `final/`: the trained LoRA adapter and processor
+- `best/`: the best checkpoint by eval loss (only with `--eval`)
+- `loss_curves.png`, `train_log_history.json`, `train_config.json`, `logs/` (TensorBoard)
+
+Run inference with your own adapter:
+
+```bash
+python scripts/run.py cap --size 8b --lora models/finetune/8b/final
+```
 
 ## Results
 
