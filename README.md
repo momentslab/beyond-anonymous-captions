@@ -9,7 +9,7 @@
 <!-- TODO: replace with final paper link once public -->
 [![Paper](https://img.shields.io/badge/Paper-coming_soon-lightgrey)](#citation)
 [![Dataset](https://img.shields.io/badge/🤗_Dataset-beyond--anonymous--captions-yellow)](https://huggingface.co/datasets/momentslab/beyond-anonymous-captions)
-[![Models](https://img.shields.io/badge/🤗_Models-Qwen3--VL_LoRA-yellow)](https://huggingface.co/models?search=momentslab/beyond-anonymous-captions)
+[![Models](https://img.shields.io/badge/🤗_Models-Qwen3--VL_LoRA-yellow)](https://huggingface.co/momentslab/beyond-anonymous-captions)
 [![License: CC BY-NC 4.0](https://img.shields.io/badge/License-CC_BY--NC_4.0-lightgrey.svg)](LICENSE)
 
 [Moments Lab](https://www.momentslab.com)
@@ -35,9 +35,7 @@ Generic video captioners say *"a man talks to a woman."* Editorial teams need *"
 | ⭐ Dataset: benchmark | [`shot_captions/test`](https://huggingface.co/datasets/momentslab/beyond-anonymous-captions/tree/main/shot_captions/test) | **Manually annotated.** 750 shots · 12 movies · 8 frames per shot · face boxes with actor/character · caption · 4 identity QA per shot (3,000) |
 | Dataset: train | [`shot_captions/train`](https://huggingface.co/datasets/momentslab/beyond-anonymous-captions/tree/main/shot_captions/train) | 31,958 shots · 73 movies · 8 frames per shot · face boxes with actor/character · caption |
 | Dataset: face tracks | [`clip_faces`](https://huggingface.co/datasets/momentslab/beyond-anonymous-captions/tree/main/clip_faces) | 33,996 clips (LSMDC + MPII-MD) · face boxes with actor/character and identification score on **every frame** · no captions, no QA |
-| LoRA 2B | [`momentslab/beyond-anonymous-captions-qwen3-vl-2b-lora`](https://huggingface.co/momentslab/beyond-anonymous-captions-qwen3-vl-2b-lora) | Adapter for `Qwen/Qwen3-VL-2B-Instruct` |
-| LoRA 4B | [`momentslab/beyond-anonymous-captions-qwen3-vl-4b-lora`](https://huggingface.co/momentslab/beyond-anonymous-captions-qwen3-vl-4b-lora) | Adapter for `Qwen/Qwen3-VL-4B-Instruct` |
-| LoRA 8B | [`momentslab/beyond-anonymous-captions-qwen3-vl-8b-lora`](https://huggingface.co/momentslab/beyond-anonymous-captions-qwen3-vl-8b-lora) | Adapter for `Qwen/Qwen3-VL-8B-Instruct` |
+| Models: LoRA adapters | [`momentslab/beyond-anonymous-captions`](https://huggingface.co/momentslab/beyond-anonymous-captions) | One repo, one subfolder per size: [`2b/`](https://huggingface.co/momentslab/beyond-anonymous-captions/tree/main/2b), [`4b/`](https://huggingface.co/momentslab/beyond-anonymous-captions/tree/main/4b), [`8b/`](https://huggingface.co/momentslab/beyond-anonymous-captions/tree/main/8b) for Qwen3-VL-2B/4B/8B-Instruct |
 
 ## Repository structure
 
@@ -165,11 +163,13 @@ Train and benchmark are **disjoint at the movie level**.
 
 ## Model weights
 
+All three adapters live in one repo, [`momentslab/beyond-anonymous-captions`](https://huggingface.co/momentslab/beyond-anonymous-captions), with one subfolder per size:
+
 ```bash
-hf download momentslab/beyond-anonymous-captions-qwen3-vl-8b-lora --local-dir models/lora/8b
+hf download momentslab/beyond-anonymous-captions --include "8b/*" --local-dir models/lora
 ```
 
-Swap `8b` for `2b` or `4b` as needed. You can also skip this step: `--lora auto` in `run.py` uses `models/lora/{size}` and downloads the adapter from the Hub if it's missing.
+This puts the adapter in `models/lora/8b/`. Swap `8b` for `2b` or `4b`, or drop `--include` to get all three. You can also skip this step: `--lora auto` in `run.py` uses `models/lora/{size}` and downloads the adapter from the Hub if it's missing.
 
 To use an adapter directly in Python:
 
@@ -177,11 +177,10 @@ To use an adapter directly in Python:
 from peft import PeftModel
 from transformers import AutoProcessor, Qwen3VLForConditionalGeneration
 
-base = Qwen3VLForConditionalGeneration.from_pretrained(
-    "Qwen/Qwen3-VL-8B-Instruct", torch_dtype="bfloat16", device_map="auto"
-)
-model = PeftModel.from_pretrained(base, "momentslab/beyond-anonymous-captions-qwen3-vl-8b-lora")
-processor = AutoProcessor.from_pretrained("momentslab/beyond-anonymous-captions-qwen3-vl-8b-lora")
+base_id = "Qwen/Qwen3-VL-8B-Instruct"
+base = Qwen3VLForConditionalGeneration.from_pretrained(base_id, torch_dtype="bfloat16", device_map="auto")
+model = PeftModel.from_pretrained(base, "momentslab/beyond-anonymous-captions", subfolder="8b")
+processor = AutoProcessor.from_pretrained(base_id)
 ```
 
 ## Inference

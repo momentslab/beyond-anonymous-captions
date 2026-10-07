@@ -37,7 +37,7 @@ from grounding.one_prompt import (
     prepare_one_prompt_inputs,
     prepare_one_prompt_qa_inputs,
 )
-from config import LORA_HF_REPOS, LORA_PRESETS, MAX_NEW_TOKENS, MODEL_PRESETS, QA_MAX_NEW_TOKENS
+from config import LORA_HF_REPO, LORA_PRESETS, MAX_NEW_TOKENS, MODEL_PRESETS, QA_MAX_NEW_TOKENS
 from prompts import IDENTITY_CAPTION_PROMPT, IDENTITY_QA_PROMPT
 from utils.bbox import estimate_body_bbox_from_face
 from utils.captioner import load_batched_hf_captioner
@@ -128,8 +128,8 @@ def resolve_lora(lora_arg: str | None, size: str) -> Path | None:
             p = PROJECT_ROOT / p
         if not (p / "adapter_config.json").exists():
             from huggingface_hub import snapshot_download
-            print(f"Downloading LoRA {LORA_HF_REPOS[size]} -> {p}")
-            snapshot_download(LORA_HF_REPOS[size], local_dir=p)
+            print(f"Downloading LoRA {LORA_HF_REPO}/{size} -> {p}")
+            snapshot_download(LORA_HF_REPO, allow_patterns=[f"{size}/*"], local_dir=p.parent)
         return p
     return Path(lora_arg)
 

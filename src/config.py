@@ -34,11 +34,8 @@ LORA_PRESETS = {
     "8b": "models/lora/8b",
 }
 
-LORA_HF_REPOS = {
-    "2b": "momentslab/beyond-anonymous-captions-qwen3-vl-2b-lora",
-    "4b": "momentslab/beyond-anonymous-captions-qwen3-vl-4b-lora",
-    "8b": "momentslab/beyond-anonymous-captions-qwen3-vl-8b-lora",
-}
+# HF model repo holding one adapter subfolder per size (2b/, 4b/, 8b/).
+LORA_HF_REPO = "momentslab/beyond-anonymous-captions"
 
 # Default LoRA fine-tune (combin_2): lr=5e-5, r=16, α=32, 1 epoch.
 FINETUNE_LORA = {
