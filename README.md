@@ -196,8 +196,8 @@ Output: one video per clip at `output/videos/clip_faces/{MOVIE}/{clip}_bbox.mp4`
 {
   "caption": "Elliot Page, wearing a patterned collared shirt, receives a folded drawing passed across desks in a classroom, unfolds it, and smiles while reading the note.",
   "questions": [
-    {"id": "Q1", "type": "appearance",  "question": "Who is wearing a patterned collared shirt?", "answer": "Elliot Page", "ok": true},
-    {"id": "Q4", "type": "interaction", "question": "Who passes the folded drawing to Elliot Page?", "answer": "UNIDENTIFIED", "ok": true}
+    {"id": "Q1", "type": "appearance",  "question": "Who is wearing a patterned collared shirt?", "answer": "Elliot Page"},
+    {"id": "Q4", "type": "interaction", "question": "Who passes the folded drawing to Elliot Page?", "answer": "UNIDENTIFIED"}
   ]
 }
 ```
@@ -212,7 +212,7 @@ Output: one video per clip at `output/videos/clip_faces/{MOVIE}/{clip}_bbox.mp4`
 | `shot_index`, `shot_start_second`, `shot_end_second` | Shot position inside the clip |
 | `fps`, `frame_width`, `frame_height`, `total_video_frames` | Source video metadata |
 | `caption` | Caption naming every identified person |
-| `questions[]` | *Benchmark only.* `id`, `type`, `question`, `answer`, `ok` |
+| `questions[]` | *Benchmark only.* `id`, `type`, `question`, `answer` |
 | `frames[]` | `frame_order`, `frame_index`, `timestamp`, `persons[]` → `actor`, `character`, `bbox` (face, `[x1, y1, x2, y2]` px), `track_id`, `score` |
 
 **`clip_faces/*.json`**: face tracks on every frame of the clip (`sampled_frames[].faces[]` → `track_id`, `bbox`, `name` (character), `actor`, `score`).
