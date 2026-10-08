@@ -151,11 +151,11 @@ Train and benchmark are **disjoint at the movie level**. Steps 4 and 5 below are
 Needed for inference and training.
 
 ```bash
-python3 src/extract_shot_frames.py --split test
+python3 src/extract_shot_frames.py --split test --videos-root ./data/videos/
 ```
 
 ```bash
-python3 src/extract_shot_frames.py --split train
+python3 src/extract_shot_frames.py --split train --videos-root ./data/videos/
 ```
 
 For every shot, this reads the 8 frame indices from `input_sequence.json`, grabs those frames from the source clip and writes them next to the JSON:
@@ -174,11 +174,11 @@ Shots that already have a `sequence.jpg` are skipped, so you can stop and resume
 To see the `clip_faces` annotations on the videos, draw them on every frame of a clip:
 
 ```bash
-python3 src/render_clip_video.py --clip 3001_21_JUMP_STREET_01.16.35.129-01.16.37.251
+python3 src/render_clip_video.py --clip 3001_21_JUMP_STREET_01.16.35.129-01.16.37.251 --videos-root ./data/videos/
 ```
 
 ```bash
-python3 src/render_clip_video.py --dataset lsmdc --movie 21_JUMP_STREET --limit 3
+python3 src/render_clip_video.py --dataset lsmdc --movie 21_JUMP_STREET --limit 3 --videos-root ./data/videos/
 ```
 
 Output: one video per clip at `output/videos/clip_faces/{MOVIE}/{clip}_bbox.mp4` (change it with `--output-dir`).

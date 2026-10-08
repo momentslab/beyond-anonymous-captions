@@ -13,9 +13,9 @@ Each frame gets face bboxes drawn with actor name + score from the JSON's
 ``sampled_frames[].faces[]`` entries.
 
 Usage:
-    python3 src/render_clip_video.py --dataset lsmdc --movie 30_MINUTES_OR_LESS
-    python3 src/render_clip_video.py --dataset lsmdc --movie 30_MINUTES_OR_LESS --limit 3
-    python3 src/render_clip_video.py --clip 3002_30_MINUTES_OR_LESS_00.03.40.059-00.03.45.728
+    python3 src/render_clip_video.py --dataset lsmdc --movie 30_MINUTES_OR_LESS --videos-root ./data/videos/
+    python3 src/render_clip_video.py --dataset lsmdc --movie 30_MINUTES_OR_LESS --limit 3 --videos-root ./data/videos/
+    python3 src/render_clip_video.py --clip 3002_30_MINUTES_OR_LESS_00.03.40.059-00.03.45.728 --videos-root ./data/videos/
 """
 
 from __future__ import annotations
@@ -157,9 +157,9 @@ def main() -> int:
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 examples:
-  python3 src/render_clip_video.py --dataset lsmdc --movie 30_MINUTES_OR_LESS
-  python3 src/render_clip_video.py --dataset lsmdc --movie 30_MINUTES_OR_LESS --limit 3
-  python3 src/render_clip_video.py --clip 3002_30_MINUTES_OR_LESS_00.03.40.059-00.03.45.728
+  python3 src/render_clip_video.py --dataset lsmdc --movie 30_MINUTES_OR_LESS --videos-root ./data/videos/
+  python3 src/render_clip_video.py --dataset lsmdc --movie 30_MINUTES_OR_LESS --limit 3 --videos-root ./data/videos/
+  python3 src/render_clip_video.py --clip 3002_30_MINUTES_OR_LESS_00.03.40.059-00.03.45.728 --videos-root ./data/videos/
 """,
     )
     parser.add_argument("--dataset", default=None, choices=["lsmdc", "mpiimd"],
