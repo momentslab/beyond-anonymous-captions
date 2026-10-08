@@ -6,8 +6,7 @@
 
 *Qwen3-VL + LoRA · name-aware captions · identity QA*
 
-<!-- TODO: replace with final paper link once public -->
-[![Paper](https://img.shields.io/badge/Paper-coming_soon-lightgrey)](#citation)
+[![arXiv](https://img.shields.io/badge/arXiv-2610.10163-b31b1b.svg)](https://arxiv.org/abs/2610.10163)
 [![Dataset](https://img.shields.io/badge/🤗_Dataset-beyond--anonymous--captions-yellow)](https://huggingface.co/datasets/momentslab/beyond-anonymous-captions)
 [![Models](https://img.shields.io/badge/🤗_Models-Qwen3--VL_LoRA-yellow)](https://huggingface.co/momentslab/beyond-anonymous-captions)
 [![License: CC BY-NC 4.0](https://img.shields.io/badge/License-CC_BY--NC_4.0-lightgrey.svg)](LICENSE)
@@ -46,6 +45,7 @@
 
 | Resource | Link | Description |
 |---|---|---|
+| Paper | [arXiv:2610.10163](https://arxiv.org/abs/2610.10163) | *Beyond Anonymous Captions: Grounding Character Identity in Video Captioning and Question Answering* |
 | Code | this repo | Inference, LoRA fine-tuning, data prep |
 | ⭐ Dataset: benchmark | [`shot_captions/test`](https://huggingface.co/datasets/momentslab/beyond-anonymous-captions/viewer/benchmark/test) | **Manually annotated.** 750 shots · 12 movies · 8 frames per shot · face boxes with actor/character · caption · 4 identity QA per shot (3,000) |
 | Dataset: train | [`shot_captions/train`](https://huggingface.co/datasets/momentslab/beyond-anonymous-captions/viewer/train/train) | 31,935 shots · 72 movies · 8 frames per shot · face boxes with actor/character · caption |
@@ -311,8 +311,7 @@ python3 scripts/run.py cap --size 8b --lora models/finetune/8b/final
 
 ## Results
 
-<!-- TODO: copy final numbers from the paper. Do not fill in from memory. -->
-See the paper for captioning and identity-QA results.
+See the [paper](https://arxiv.org/abs/2610.10163) for captioning and question-answering results on the BAC benchmark.
 
 ## License & intended use
 
@@ -327,11 +326,14 @@ The annotations include the names of publicly credited actors and characters, ti
 ## Citation
 
 ```bibtex
-@misc{bac2026,
-  title  = {BAC: Beyond Anonymous Captions: Grounding Character Identity in Video Captioning and Question Answering},
-  author = {TODO},
-  year   = {2026},
-  note   = {TODO: venue / arXiv id}
+@misc{filalirazzouki2026bac,
+  title         = {Beyond Anonymous Captions: Grounding Character Identity in Video Captioning and Question Answering},
+  author        = {Anas Filali Razzouki and Killian Steunou and Khalil Guetari and Thomas Kling and Moun{\^\i}m El-Yacoubi and Yannis Tevissen},
+  year          = {2026},
+  eprint        = {2610.10163},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.CV},
+  url           = {https://arxiv.org/abs/2610.10163}
 }
 ```
 
