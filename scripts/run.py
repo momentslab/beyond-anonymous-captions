@@ -268,7 +268,6 @@ def run_qa(args, shots, output_root: Path, model_name: str, batch_size: int,
                 )
                 parsed = decode_p_answers(parsed, p_to_compare)
                 extra = {
-                    "p_to_full": prepared.get("p_to_full") or {},
                     "p_indices": True, "box_source": "face",
                     "draw_boxes": True, "grounding": "coord_face",
                     "frames_metadata": _extract_frames_metadata(prepared),
@@ -288,6 +287,7 @@ def run_qa(args, shots, output_root: Path, model_name: str, batch_size: int,
                         (prepared.get("qa_entry_full") or qa_entry).get("questions") or [],
                         prepared.get("variant_to_p") or {},
                     ),
+                    p_to_full=prepared.get("p_to_full") or {},
                     extra=extra,
                 )
                 tmp = rpath.with_name(f"{rpath.stem}.{os.getpid()}.tmp.json")
@@ -427,9 +427,9 @@ def run_caption(args, shots, output_root: Path, model_name: str, batch_size: int
                     "frame_width": prepared["image_w"],
                     "frame_height": prepared["image_h"],
                     "actors": prepared["actors"],
+                    "p_to_full": prepared.get("p_to_full") or {},
                     "caption_raw": caption_raw,
                     "caption": caption,
-                    "p_to_full": prepared.get("p_to_full") or {},
                     "inference_time_seconds": per_clip,
                 }
                 for key in ("movie", "source_clip", "fps", "total_video_frames"):

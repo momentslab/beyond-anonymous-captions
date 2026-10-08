@@ -175,6 +175,7 @@ def merge_separate_qa_result(
     per_clip_time: float,
     model_name: str,
     questions_p: Optional[List[Dict]] = None,
+    p_to_full: Optional[Dict[str, str]] = None,
     extra: Optional[Dict] = None,
 ) -> Dict:
     existing: Dict = {}
@@ -249,6 +250,7 @@ def merge_separate_qa_result(
         "num_frames": num_frames,
         "num_unique_actors": len(actors),
         "actors": list(actors),
+        "p_to_full": p_to_full or {},
         "questions": enriched_questions,
         "model_output_raw": output_text,
         "model_output_raw_by_id": raw_by_id,
