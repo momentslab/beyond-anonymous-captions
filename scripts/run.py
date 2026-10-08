@@ -39,7 +39,6 @@ from grounding.one_prompt import (
 )
 from config import LORA_HF_REPO, LORA_PRESETS, MAX_NEW_TOKENS, MODEL_PRESETS, QA_MAX_NEW_TOKENS
 from prompts import IDENTITY_CAPTION_PROMPT, IDENTITY_QA_PROMPT
-from utils.bbox import estimate_body_bbox_from_face
 from utils.captioner import load_batched_hf_captioner
 from utils.names import replace_p_indices
 from utils.qa import (
@@ -77,25 +76,16 @@ def shot_output_folder(output_root: Path, shot_folder: Path, input_data: dict) -
 
 def _extract_frames_metadata(prepared):
     frames = prepared.get("frames") or prepared["input_data"]["frames"]
-    image_w = prepared.get("image_w") or prepared["input_data"]["frame_width"]
-    image_h = prepared.get("image_h") or prepared["input_data"]["frame_height"]
     p_to_full = prepared.get("p_to_full") or {}
     out = []
     for frame in frames:
         persons_prompt = frame.get("_persons_for_prompt", [])
         frame_persons = []
         for p in persons_prompt:
-            face = p.get("face_bbox") or p["bbox"]
-            body_est = estimate_body_bbox_from_face(
-                face, k_h=6.5, k_w=2.5, k_offset=0.15,
-                image_width=image_w, image_height=image_h,
-            )
             frame_persons.append({
                 "label": p["name"],
                 "actor": p_to_full.get(p["name"], p["name"]),
-                "face_bbox": face,
-                "body_bbox_estimated": body_est,
-                "used_bbox": p["bbox"],
+                "face_bbox": p.get("face_bbox") or p["bbox"],
             })
         out.append({
             "frame_order": frame.get("frame_order", 0),
