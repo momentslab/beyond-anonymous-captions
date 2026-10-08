@@ -246,11 +246,11 @@ processor = AutoProcessor.from_pretrained(base_id)
 Run on the BAC benchmark (`data/shot_captions/test`):
 
 ```bash
-python3 scripts/run.py cap --size 8b --lora auto
+python3 scripts/run.py cap --size 8b --lora auto --visualize
 ```
 
 ```bash
-python3 scripts/run.py qa --size 8b --lora auto
+python3 scripts/run.py qa --size 8b --lora auto --visualize
 ```
 
 | Flag | Meaning |
