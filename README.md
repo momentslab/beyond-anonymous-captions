@@ -109,14 +109,6 @@ hf download momentslab/beyond-anonymous-captions --repo-type dataset --local-dir
 python scripts/unpack_data.py
 ```
 
-The Hub stores each subset as one compressed JSONL (about 70 MB in total), so the download is only a handful of files. `unpack_data.py` rebuilds the per-shot / per-clip JSON files the code reads (layout in step 3). Add `--remove_archives` to delete the `.jsonl.gz` files afterwards.
-
-To download only the benchmark:
-
-```bash
-hf download momentslab/beyond-anonymous-captions --repo-type dataset --local-dir data --include "shot_captions/test.jsonl.gz" "train_test_split/*"
-```
-
 ### 2. Videos (from LSMDC v2, not redistributed)
 
 We don't redistribute any video or frames. To get the source clips:
