@@ -5,7 +5,7 @@ Inverse of ``scripts/unpack_data.py``: each line is one original JSON file,
 with its path relative to ``data/`` in ``path``. These are the files hosted
 on Hugging Face.
 
-    python scripts/data_curation/pack_data.py --out_dir /tmp/bac_packed
+    python3 scripts/data_curation/pack_data.py --out_dir /tmp/bac_packed
 """
 
 from __future__ import annotations

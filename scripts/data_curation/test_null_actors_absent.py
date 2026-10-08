@@ -12,8 +12,8 @@ missing. This script:
      ``actors``, ``p_to_full``, or ``frames_metadata`` person names.
 
 Usage:
-    python scripts/data_curation/test_null_actors_absent.py
-    python scripts/data_curation/test_null_actors_absent.py --qa_root /path/to/coord_face
+    python3 scripts/data_curation/test_null_actors_absent.py
+    python3 scripts/data_curation/test_null_actors_absent.py --qa_root /path/to/coord_face
 """
 
 from __future__ import annotations

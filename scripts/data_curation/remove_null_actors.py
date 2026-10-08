@@ -6,9 +6,9 @@ drop those person boxes, and rebuild frames + sequence grids.
 The original split under data/shot_captions/{split} is left unchanged.
 
 Usage:
-    python scripts/data_curation/remove_null_actors.py
-    python scripts/data_curation/remove_null_actors.py --dry_run
-    python scripts/data_curation/remove_null_actors.py --split test --limit 3
+    python3 scripts/data_curation/remove_null_actors.py
+    python3 scripts/data_curation/remove_null_actors.py --dry_run
+    python3 scripts/data_curation/remove_null_actors.py --split test --limit 3
 """
 
 from __future__ import annotations

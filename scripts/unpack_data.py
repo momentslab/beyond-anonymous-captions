@@ -10,8 +10,8 @@ the code expects:
     data/clip_faces/lsmdc.jsonl.gz     -> data/clip_faces/lsmdc/{MOVIE}/{clip}.json
     data/clip_faces/mpiimd.jsonl.gz    -> data/clip_faces/mpiimd/...
 
-    python scripts/unpack_data.py
-    python scripts/unpack_data.py --remove_archives
+    python3 scripts/unpack_data.py
+    python3 scripts/unpack_data.py --remove_archives
 """
 
 from __future__ import annotations

@@ -3,12 +3,12 @@
 BAC inference — identity QA or captioning, coord_face, Qwen 2b/4b/8b.
 
 Usage:
-    python scripts/run.py qa  --size 2b                  # base QA
-    python scripts/run.py qa  --size 8b --lora auto      # LoRA QA (default LoRA path)
-    python scripts/run.py qa  --size 4b --lora /path/to/adapter
-    python scripts/run.py cap --size 2b                  # base captioning
-    python scripts/run.py cap --size 8b --lora auto      # LoRA captioning
-    python scripts/run.py qa  --size 2b --limit 5        # quick test
+    python3 scripts/run.py qa  --size 2b                  # base QA
+    python3 scripts/run.py qa  --size 8b --lora auto      # LoRA QA (default LoRA path)
+    python3 scripts/run.py qa  --size 4b --lora /path/to/adapter
+    python3 scripts/run.py cap --size 2b                  # base captioning
+    python3 scripts/run.py cap --size 8b --lora auto      # LoRA captioning
+    python3 scripts/run.py qa  --size 2b --limit 5        # quick test
 """
 
 from __future__ import annotations
@@ -504,10 +504,10 @@ def main() -> int:
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""\
 examples:
-  python scripts/run.py qa  --size 2b
-  python scripts/run.py qa  --size 8b --lora auto
-  python scripts/run.py cap --size 4b --lora /path/to/adapter
-  python scripts/run.py qa  --size 2b --limit 5 --visualize""",
+  python3 scripts/run.py qa  --size 2b
+  python3 scripts/run.py qa  --size 8b --lora auto
+  python3 scripts/run.py cap --size 4b --lora /path/to/adapter
+  python3 scripts/run.py qa  --size 2b --limit 5 --visualize""",
     )
     parser.add_argument("task", choices=["qa", "cap"], help="qa = question answering, cap = captioning")
     parser.add_argument("--size", choices=sorted(MODEL_PRESETS), default="2b", help="Model size (default: 2b)")

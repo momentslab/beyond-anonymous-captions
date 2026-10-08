@@ -3,8 +3,8 @@
 
 Default: all valid train shots go to train_manifest.jsonl, eval is empty.
 
-    python scripts/prepare_manifests.py
-    python scripts/prepare_manifests.py --eval_ratio 0.1
+    python3 scripts/prepare_manifests.py
+    python3 scripts/prepare_manifests.py --eval_ratio 0.1
 """
 
 from __future__ import annotations

@@ -8,8 +8,8 @@ Rewrite every shot JSON with the same prepare-time filters as run.py:
 The original split is not modified.
 
 Usage:
-    python scripts/data_curation/update_test_prepare_jsons.py
-    python scripts/data_curation/update_test_prepare_jsons.py \\
+    python3 scripts/data_curation/update_test_prepare_jsons.py
+    python3 scripts/data_curation/update_test_prepare_jsons.py \\
         --src data/shot_captions/train \\
         --out data/shot_captions/train_update
 """

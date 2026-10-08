@@ -6,11 +6,11 @@ Default: train on the full train split for 1 epoch, no eval.
 Hyperparams (combin_2): lr=5e-5, r=16, α=32, dropout=0.05.
 
 Usage:
-    python scripts/train.py --size 2b
-    python scripts/train.py --size 8b
-    python scripts/train.py --size 4b --eval --eval_ratio 0.1
-    python scripts/train.py --size 2b --lr 3e-5 --lora_r 8 --lora_alpha 16 --eval
-    python scripts/train.py --size 2b --max_steps 20
+    python3 scripts/train.py --size 2b
+    python3 scripts/train.py --size 8b
+    python3 scripts/train.py --size 4b --eval --eval_ratio 0.1
+    python3 scripts/train.py --size 2b --lr 3e-5 --lora_r 8 --lora_alpha 16 --eval
+    python3 scripts/train.py --size 2b --max_steps 20
 """
 
 from __future__ import annotations
@@ -73,10 +73,10 @@ def parse_args() -> argparse.Namespace:
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 examples:
-  python scripts/train.py --size 2b
-  python scripts/train.py --size 8b --eval --eval_ratio 0.1
-  python scripts/train.py --size 4b --lr 3e-5 --lora_r 8 --lora_alpha 16 --eval
-  python scripts/train.py --size 2b --max_steps 20
+  python3 scripts/train.py --size 2b
+  python3 scripts/train.py --size 8b --eval --eval_ratio 0.1
+  python3 scripts/train.py --size 4b --lr 3e-5 --lora_r 8 --lora_alpha 16 --eval
+  python3 scripts/train.py --size 2b --max_steps 20
 """,
     )
     p.add_argument("--size", choices=["2b", "4b", "8b"], default="2b",
@@ -245,7 +245,7 @@ def _maybe_eval_dataset(args, processor, use_eval: bool):
         return None
     if n_eval == 0:
         print("Eval requested but eval_manifest is empty. Training without eval.\n"
-              "  To hold out a split:  python scripts/train.py --size "
+              "  To hold out a split:  python3 scripts/train.py --size "
               f"{args.size} --eval --eval_ratio 0.1", flush=True)
         return None
     return GroundedCaptionDataset(

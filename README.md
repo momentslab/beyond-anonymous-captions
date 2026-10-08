@@ -82,7 +82,7 @@ git clone https://github.com/momentslab/beyond-anonymous-captions.git
 ```
 
 ```bash
-cd beyond-anonymous-captions && python -m venv .venv && source .venv/bin/activate
+cd beyond-anonymous-captions && python3 -m venv .venv && source .venv/bin/activate
 ```
 
 ```bash
@@ -106,7 +106,7 @@ hf download momentslab/beyond-anonymous-captions --repo-type dataset --local-dir
 ```
 
 ```bash
-python scripts/unpack_data.py
+python3 scripts/unpack_data.py
 ```
 
 ### 2. Videos (from LSMDC v2, not redistributed)
@@ -151,11 +151,11 @@ Train and benchmark are **disjoint at the movie level**. Steps 4 and 5 below are
 Needed for inference and training.
 
 ```bash
-python src/extract_shot_frames.py --split test
+python3 src/extract_shot_frames.py --split test
 ```
 
 ```bash
-python src/extract_shot_frames.py --split train
+python3 src/extract_shot_frames.py --split train
 ```
 
 For every shot, this reads the 8 frame indices from `input_sequence.json`, grabs those frames from the source clip and writes them next to the JSON:
@@ -174,11 +174,11 @@ Shots that already have a `sequence.jpg` are skipped, so you can stop and resume
 To see the `clip_faces` annotations on the videos, draw them on every frame of a clip:
 
 ```bash
-python src/render_clip_video.py --clip 3001_21_JUMP_STREET_01.16.35.129-01.16.37.251
+python3 src/render_clip_video.py --clip 3001_21_JUMP_STREET_01.16.35.129-01.16.37.251
 ```
 
 ```bash
-python src/render_clip_video.py --dataset lsmdc --movie 21_JUMP_STREET --limit 3
+python3 src/render_clip_video.py --dataset lsmdc --movie 21_JUMP_STREET --limit 3
 ```
 
 Output: one video per clip at `output/videos/clip_faces/{MOVIE}/{clip}_bbox.mp4` (change it with `--output-dir`).
@@ -246,11 +246,11 @@ processor = AutoProcessor.from_pretrained(base_id)
 Run on the BAC benchmark (`data/shot_captions/test`):
 
 ```bash
-python scripts/run.py cap --size 8b --lora auto
+python3 scripts/run.py cap --size 8b --lora auto
 ```
 
 ```bash
-python scripts/run.py qa --size 8b --lora auto
+python3 scripts/run.py qa --size 8b --lora auto
 ```
 
 | Flag | Meaning |
@@ -278,13 +278,13 @@ Outputs are written per shot as `result_caption_coord_face.json` / `result_ident
 The base weights are downloaded from Hugging Face and kept frozen; only the small LoRA adapter is trained.
 
 ```bash
-python scripts/train.py --size 8b
+python3 scripts/train.py --size 8b
 ```
 
 To hold out 10 % of the training shots for evaluation and keep the best checkpoint:
 
 ```bash
-python scripts/train.py --size 2b --eval --eval_ratio 0.1
+python3 scripts/train.py --size 2b --eval --eval_ratio 0.1
 ```
 
 Training manifests are built from `data/shot_captions/train` on the first run (or with `--prepare`). Default hyperparameters (`src/config.py`):
@@ -306,7 +306,7 @@ Outputs go to `models/finetune/{size}/` (change with `--output_dir`):
 Run inference with your own adapter:
 
 ```bash
-python scripts/run.py cap --size 8b --lora models/finetune/8b/final
+python3 scripts/run.py cap --size 8b --lora models/finetune/8b/final
 ```
 
 ## Results

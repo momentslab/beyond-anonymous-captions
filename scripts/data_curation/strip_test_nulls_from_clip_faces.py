@@ -8,8 +8,8 @@ names are removed from every sampled frame of the clip_faces JSON, not
 only the 8 test-selected frames.
 
 Usage:
-    python scripts/data_curation/strip_test_nulls_from_clip_faces.py
-    python scripts/data_curation/strip_test_nulls_from_clip_faces.py --dry_run
+    python3 scripts/data_curation/strip_test_nulls_from_clip_faces.py
+    python3 scripts/data_curation/strip_test_nulls_from_clip_faces.py --dry_run
 """
 
 from __future__ import annotations

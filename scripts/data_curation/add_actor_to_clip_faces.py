@@ -8,8 +8,8 @@ rank abbreviations (``ssgt``), and unique first/last names in that
 movie's cast. Faces are never dropped. A remaining miss is ``null``.
 
 Usage:
-    python scripts/data_curation/add_actor_to_clip_faces.py
-    python scripts/data_curation/add_actor_to_clip_faces.py --dry_run --limit 20
+    python3 scripts/data_curation/add_actor_to_clip_faces.py
+    python3 scripts/data_curation/add_actor_to_clip_faces.py --dry_run --limit 20
 """
 
 from __future__ import annotations

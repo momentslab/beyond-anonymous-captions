@@ -9,8 +9,8 @@ In-place clip_faces cleanup, matching train/test prepare filters:
 Dedup was never previously run on clip_faces (only on shot_captions).
 
 Usage:
-    python scripts/data_curation/clean_clip_faces.py
-    python scripts/data_curation/clean_clip_faces.py --dry_run --limit 20
+    python3 scripts/data_curation/clean_clip_faces.py
+    python3 scripts/data_curation/clean_clip_faces.py --dry_run --limit 20
 """
 
 from __future__ import annotations
