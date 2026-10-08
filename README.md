@@ -47,9 +47,9 @@
 | Resource | Link | Description |
 |---|---|---|
 | Code | this repo | Inference, LoRA fine-tuning, data prep |
-| ⭐ Dataset: benchmark | [`shot_captions/test`](https://huggingface.co/datasets/momentslab/beyond-anonymous-captions/tree/main/shot_captions/test) | **Manually annotated.** 750 shots · 12 movies · 8 frames per shot · face boxes with actor/character · caption · 4 identity QA per shot (3,000) |
-| Dataset: train | [`shot_captions/train`](https://huggingface.co/datasets/momentslab/beyond-anonymous-captions/tree/main/shot_captions/train) | 31,935 shots · 72 movies · 8 frames per shot · face boxes with actor/character · caption |
-| Dataset: face tracks | [`clip_faces`](https://huggingface.co/datasets/momentslab/beyond-anonymous-captions/tree/main/clip_faces) | 33,996 clips (LSMDC + MPII-MD) · face boxes with actor/character and identification score on **every frame** · no captions, no QA |
+| ⭐ Dataset: benchmark | [`shot_captions/test`](https://huggingface.co/datasets/momentslab/beyond-anonymous-captions/viewer/benchmark/test) | **Manually annotated.** 750 shots · 12 movies · 8 frames per shot · face boxes with actor/character · caption · 4 identity QA per shot (3,000) |
+| Dataset: train | [`shot_captions/train`](https://huggingface.co/datasets/momentslab/beyond-anonymous-captions/viewer/train/train) | 31,935 shots · 72 movies · 8 frames per shot · face boxes with actor/character · caption |
+| Dataset: face tracks | [`clip_faces`](https://huggingface.co/datasets/momentslab/beyond-anonymous-captions/viewer/clip_faces/lsmdc) | 33,996 clips (LSMDC + MPII-MD) · face boxes with actor/character and identification score on **every frame** · no captions, no QA |
 | Models: LoRA adapters | [`momentslab/beyond-anonymous-captions`](https://huggingface.co/momentslab/beyond-anonymous-captions) | One repo, one subfolder per size: [`2b/`](https://huggingface.co/momentslab/beyond-anonymous-captions/tree/main/2b), [`4b/`](https://huggingface.co/momentslab/beyond-anonymous-captions/tree/main/4b), [`8b/`](https://huggingface.co/momentslab/beyond-anonymous-captions/tree/main/8b) for Qwen3-VL-2B/4B/8B-Instruct |
 
 ## Repository structure
@@ -60,6 +60,7 @@
 │   ├── run.py                 # inference: identity QA or captioning
 │   ├── train.py               # LoRA fine-tuning
 │   ├── prepare_manifests.py   # build finetune manifests from shot JSONs
+│   ├── unpack_data.py         # unpack the HF archives into per-file JSONs
 │   └── data_curation/         # scripts used to build/clean the released annotations
 ├── src/
 │   ├── config.py              # model presets, generation + LoRA hyperparameters
@@ -104,6 +105,18 @@ hf auth login
 hf download momentslab/beyond-anonymous-captions --repo-type dataset --local-dir data
 ```
 
+```bash
+python scripts/unpack_data.py
+```
+
+The Hub stores each subset as one compressed JSONL (about 70 MB in total), so the download is only a handful of files. `unpack_data.py` rebuilds the per-shot / per-clip JSON files the code reads (layout in step 3). Add `--remove_archives` to delete the `.jsonl.gz` files afterwards.
+
+To download only the benchmark:
+
+```bash
+hf download momentslab/beyond-anonymous-captions --repo-type dataset --local-dir data --include "shot_captions/test.jsonl.gz" "train_test_split/*"
+```
+
 ### 2. Videos (from LSMDC v2, not redistributed)
 
 We don't redistribute any video or frames. To get the source clips:
@@ -127,7 +140,7 @@ This matches the `video` path stored in every annotation file (`data/videos/{lsm
 
 ### 3. Data layout
 
-After steps 1 and 2, `data/` looks like this:
+After steps 1 and 2 (and `unpack_data.py`), `data/` looks like this:
 
 ```
 data/
