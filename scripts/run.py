@@ -261,25 +261,18 @@ def run_qa(args, shots, output_root: Path, model_name: str, batch_size: int,
                 qa_entry = prepared["qa_entry"]
                 qid = str((qa_entry.get("questions") or [{}])[0].get("id") or "Q1")
                 parsed = parse_qa_output_or_plain(output_text, qid)
-                extra = {
-                    "p_indices": True, "box_source": "face",
-                    "draw_boxes": True, "grounding": "coord_face",
-                    "frames_metadata": _extract_frames_metadata(prepared),
-                }
                 p_to_compare = compare_names_from_qa(
                     prepared.get("qa_entry_full") or qa_entry,
                     prepared.get("p_to_short") or {},
                     prepared.get("variant_to_p") or {},
                 )
                 parsed = decode_p_answers(parsed, p_to_compare)
-                extra.update({
-                    "questions_p": encode_questions_with_p_indices(
-                        (prepared.get("qa_entry_full") or qa_entry).get("questions") or [],
-                        prepared.get("variant_to_p") or {},
-                    ),
+                extra = {
                     "p_to_full": prepared.get("p_to_full") or {},
-                    "p_to_short": prepared.get("p_to_short") or {},
-                })
+                    "p_indices": True, "box_source": "face",
+                    "draw_boxes": True, "grounding": "coord_face",
+                    "frames_metadata": _extract_frames_metadata(prepared),
+                }
                 result = merge_separate_qa_result(
                     rpath,
                     movie_name=idata.get("movie") or sf.parent.parent.name,
@@ -288,9 +281,14 @@ def run_qa(args, shots, output_root: Path, model_name: str, batch_size: int,
                     full_questions=(prepared.get("qa_entry_full") or qa_entry).get("questions") or [],
                     single_questions=qa_entry.get("questions") or [],
                     parsed_answers=parsed, output_text=output_text,
-                    actors=prepared["actors"], name_mapping=p_to_compare,
+                    actors=prepared["actors"],
                     num_frames=len(prepared["frames"]),
-                    per_clip_time=per_run, model_name=model_name, extra=extra,
+                    per_clip_time=per_run, model_name=model_name,
+                    questions_p=encode_questions_with_p_indices(
+                        (prepared.get("qa_entry_full") or qa_entry).get("questions") or [],
+                        prepared.get("variant_to_p") or {},
+                    ),
+                    extra=extra,
                 )
                 tmp = rpath.with_name(f"{rpath.stem}.{os.getpid()}.tmp.json")
                 with open(tmp, "w", encoding="utf-8") as f:
@@ -432,13 +430,16 @@ def run_caption(args, shots, output_root: Path, model_name: str, batch_size: int
                     "caption_raw": caption_raw,
                     "caption": caption,
                     "p_to_full": prepared.get("p_to_full") or {},
-                    "p_to_short": p_to_short,
-                    "name_mapping": prepared["short_to_full"],
                     "inference_time_seconds": per_clip,
                 }
                 for key in ("movie", "source_clip", "fps", "total_video_frames"):
                     if key in idata:
                         result[key] = idata[key]
+                result.update({
+                    "p_indices": True, "box_source": "face",
+                    "draw_boxes": True, "grounding": "coord_face",
+                    "frames_metadata": _extract_frames_metadata(prepared),
+                })
                 rpath = out_dir / CAP_RESULT
                 tmp = rpath.with_name(f"{rpath.stem}.{os.getpid()}.tmp.json")
                 with open(tmp, "w", encoding="utf-8") as f:

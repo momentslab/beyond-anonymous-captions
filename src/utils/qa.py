@@ -7,7 +7,7 @@ import re
 from pathlib import Path
 from typing import Dict, List, Optional
 
-from utils.names import replace_p_indices
+from utils.names import replace_p_indices, resolve_short_names
 
 
 RESULT_FILENAME = "result_identity_qa.json"
@@ -171,10 +171,10 @@ def merge_separate_qa_result(
     parsed_answers,
     output_text: str,
     actors: List[str],
-    name_mapping: Dict[str, str],
     num_frames: int,
     per_clip_time: float,
     model_name: str,
+    questions_p: Optional[List[Dict]] = None,
     extra: Optional[Dict] = None,
 ) -> Dict:
     existing: Dict = {}
@@ -218,10 +218,18 @@ def merge_separate_qa_result(
             ordered.append(by_id[qid])
 
     pred_by_id = {str(a.get("id") or "").strip(): a for a in ordered}
+    question_p_by_id = {
+        str(q.get("id") or "").strip(): q.get("question")
+        for q in (questions_p or [])
+    }
     enriched_questions = []
     for q in full_questions:
         qid = str(q.get("id") or "").strip()
-        eq = dict(q)
+        eq = {}
+        for key, value in q.items():
+            eq[key] = value
+            if key == "question" and qid in question_p_by_id:
+                eq["question_p"] = question_p_by_id[qid]
         pred_item = pred_by_id.get(qid)
         if pred_item:
             eq["predicted"] = pred_item.get("answer") or ""
@@ -241,7 +249,6 @@ def merge_separate_qa_result(
         "num_frames": num_frames,
         "num_unique_actors": len(actors),
         "actors": list(actors),
-        "name_mapping": name_mapping or {},
         "questions": enriched_questions,
         "model_output_raw": output_text,
         "model_output_raw_by_id": raw_by_id,
@@ -260,7 +267,11 @@ def _norm_answer(value) -> str:
 def _person_key_map(data: Dict) -> Dict[str, str]:
     mapping = {"unidentified": "UNIDENTIFIED"}
     p_to_full = data.get("p_to_full") or {}
-    p_to_short = data.get("p_to_short") or data.get("name_mapping") or {}
+    p_to_short = data.get("p_to_short") or {}
+    if p_to_full and not p_to_short:
+        # Short names are derived from the full names, as in grounding/prepare.py.
+        full_to_short = resolve_short_names(list(p_to_full.values()))
+        p_to_short = {label: full_to_short[full] for label, full in p_to_full.items()}
     short_to_full = data.get("name_mapping") or {}
     if p_to_full:
         for label, full in p_to_full.items():
