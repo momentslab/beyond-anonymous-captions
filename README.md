@@ -306,7 +306,11 @@ Outputs go to `models/finetune/{size}/` (change with `--output_dir`):
 Run inference with your own adapter:
 
 ```bash
-python3 scripts/run.py cap --size 8b --lora models/finetune/8b/final
+python3 scripts/run.py cap --size 8b --lora models/finetune/8b/final --visualize
+```
+
+```bash
+python3 scripts/run.py qa --size 8b --lora models/finetune/8b/final --visualize
 ```
 
 ## Results
