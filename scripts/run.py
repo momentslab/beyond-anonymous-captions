@@ -414,8 +414,8 @@ def run_caption(args, shots, output_root: Path, model_name: str, batch_size: int
         for prepared, caption_raw in zip(prepared_batch, captions_raw):
             sf = prepared["shot_folder"]
             try:
-                p_to_short = prepared.get("p_to_short") or {}
-                caption = clean_awkward_phrasings(replace_p_indices(caption_raw, p_to_short))
+                p_to_full = prepared.get("p_to_full") or {}
+                caption = clean_awkward_phrasings(replace_p_indices(caption_raw, p_to_full))
                 idata = prepared["input_data"]
                 out_dir = shot_output_folder(output_root, sf, idata)
                 out_dir.mkdir(parents=True, exist_ok=True)
@@ -427,7 +427,7 @@ def run_caption(args, shots, output_root: Path, model_name: str, batch_size: int
                     "frame_width": prepared["image_w"],
                     "frame_height": prepared["image_h"],
                     "actors": prepared["actors"],
-                    "p_to_full": prepared.get("p_to_full") or {},
+                    "p_to_full": p_to_full,
                     "caption_raw": caption_raw,
                     "caption": caption,
                     "inference_time_seconds": per_clip,
