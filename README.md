@@ -224,10 +224,10 @@ Output: one video per clip at `output/videos/clip_faces/{MOVIE}/{clip}_bbox.mp4`
 All three adapters live in one repo, [`momentslab/beyond-anonymous-captions`](https://huggingface.co/momentslab/beyond-anonymous-captions), with one subfolder per size:
 
 ```bash
-hf download momentslab/beyond-anonymous-captions --include "8b/*" --local-dir models/lora
+hf download momentslab/beyond-anonymous-captions --local-dir models/lora
 ```
 
-This puts the adapter in `models/lora/8b/`. Swap `8b` for `2b` or `4b`, or drop `--include` to get all three. You can also skip this step: `--lora auto` in `run.py` uses `models/lora/{size}` and downloads the adapter from the Hub if it's missing.
+This puts the three adapters in `models/lora/2b/`, `models/lora/4b/` and `models/lora/8b/`. To get only one size, add `--include "8b/*"` (or `"2b/*"`, `"4b/*"`). You can also skip this step: `--lora auto` in `run.py` uses `models/lora/{size}` and downloads the adapter from the Hub if it's missing.
 
 To use an adapter directly in Python:
 
