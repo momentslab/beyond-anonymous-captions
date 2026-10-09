@@ -71,7 +71,7 @@
 | ⭐ Dataset: benchmark | [`shot_captions/test`](https://huggingface.co/datasets/momentslab/beyond-anonymous-captions/viewer/benchmark/test) | **Manually annotated.** 750 shots · 12 movies · 8 frames per shot · face boxes with actor/character · caption · 4 identity QA per shot (3,000) |
 | Dataset: train | [`shot_captions/train`](https://huggingface.co/datasets/momentslab/beyond-anonymous-captions/viewer/train/train) | 31,935 shots · 72 movies · 8 frames per shot · face boxes with actor/character · caption |
 | Dataset: face tracks | [`clip_faces`](https://huggingface.co/datasets/momentslab/beyond-anonymous-captions/viewer/clip_faces/lsmdc) | 33,996 clips (LSMDC + MPII-MD) · face boxes with actor/character and identification score on **every frame** · no captions, no QA |
-| Models: LoRA adapters | [`momentslab/beyond-anonymous-captions`](https://huggingface.co/momentslab/beyond-anonymous-captions) | One repo, one subfolder per size: [`2b/`](https://huggingface.co/momentslab/beyond-anonymous-captions/tree/main/2b), [`4b/`](https://huggingface.co/momentslab/beyond-anonymous-captions/tree/main/4b), [`8b/`](https://huggingface.co/momentslab/beyond-anonymous-captions/tree/main/8b) for Qwen3-VL-2B/4B/8B-Instruct |
+| BAC models | [`momentslab/beyond-anonymous-captions`](https://huggingface.co/momentslab/beyond-anonymous-captions) | Qwen3-VL-Instruct fine-tuned with LoRA on the BAC training set, one subfolder per size: [`2b/`](https://huggingface.co/momentslab/beyond-anonymous-captions/tree/main/2b), [`4b/`](https://huggingface.co/momentslab/beyond-anonymous-captions/tree/main/4b), [`8b/`](https://huggingface.co/momentslab/beyond-anonymous-captions/tree/main/8b) |
 
 ## Repository structure
 
