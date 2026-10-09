@@ -281,13 +281,15 @@ The base weights are downloaded from Hugging Face and kept frozen; only the smal
 python3 scripts/train.py --size 8b
 ```
 
-To hold out 10 % of the training shots for evaluation and keep the best checkpoint:
+To evaluate during training and keep the best checkpoint, add `--eval`:
 
 ```bash
-python3 scripts/train.py --size 2b --eval --eval_ratio 0.1
+python3 scripts/train.py --size 2b --eval
 ```
 
-Training manifests are built from `data/shot_captions/train` on the first run (or with `--prepare`). Default hyperparameters (`src/config.py`):
+`--eval` splits the training set **at the movie level**: every shot of the 15 movies listed in `EVAL_MOVIES` (`src/config.py`) goes to evaluation (1,507 shots), and the other 57 movies stay in training (30,428 shots). No movie appears on both sides. Evaluation runs every 20 steps up to step 100, then every `--eval_steps` (default 200). Without `--eval`, all 72 training movies are used for training.
+
+Training manifests are rebuilt from `data/shot_captions/train` on every run, from the shots whose frames were extracted in step 4. Default hyperparameters (`src/config.py`):
 
 | | |
 |---|---|

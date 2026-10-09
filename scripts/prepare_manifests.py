@@ -4,7 +4,7 @@
 Default: all valid train shots go to train_manifest.jsonl, eval is empty.
 
     python3 scripts/prepare_manifests.py
-    python3 scripts/prepare_manifests.py --eval_ratio 0.1
+    python3 scripts/prepare_manifests.py --eval
 """
 
 from __future__ import annotations
@@ -19,6 +19,7 @@ SRC_DIR = PROJECT_ROOT / "src"
 if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
 
+from config import EVAL_MOVIES  # noqa: E402
 from finetune.prepare_manifests import build_manifests  # noqa: E402
 
 
@@ -28,17 +29,15 @@ def main() -> int:
                    default=PROJECT_ROOT / "data" / "shot_captions" / "train")
     p.add_argument("--output_dir", type=Path,
                    default=PROJECT_ROOT / "data" / "finetune")
-    p.add_argument("--eval_ratio", type=float, default=0.0,
-                   help="Fraction of shots to hold out as eval (default: 0 = empty eval)")
-    p.add_argument("--seed", type=int, default=42)
+    p.add_argument("--eval", action="store_true",
+                   help="Hold out the movies in config.EVAL_MOVIES as eval (default: empty eval)")
     p.add_argument("--target_field", type=str, default="caption_pre")
     args = p.parse_args()
 
     summary = build_manifests(
         ann_root=args.ann_root,
         output_dir=args.output_dir,
-        eval_ratio=args.eval_ratio,
-        seed=args.seed,
+        eval_movies=EVAL_MOVIES if args.eval else None,
         target_field=args.target_field,
     )
     print(json.dumps(summary, indent=2))

@@ -1,8 +1,8 @@
 """Build train/eval manifests from BAC shot folders.
 
 Default: put every valid training shot in train and leave eval empty
-(one-epoch fine-tune over the full set). Pass ``eval_ratio > 0`` to hold
-out a random split for hyperparameter search.
+(one-epoch fine-tune over the full set). Pass ``eval_movies`` to hold out
+those movies for evaluation (movie-level split: all their shots go to eval).
 
 A shot is kept if it has ``caption_pre`` and at least one extracted frame.
 """
@@ -10,9 +10,8 @@ A shot is kept if it has ``caption_pre`` and at least one extracted frame.
 from __future__ import annotations
 
 import json
-import random
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, Iterable, List, Optional, Tuple
 
 
 def _has_frames(shot_folder: Path) -> bool:
@@ -78,29 +77,23 @@ def write_jsonl(path: Path, records: List[Dict]) -> None:
 def build_manifests(
     ann_root: Path,
     output_dir: Path,
-    eval_ratio: float = 0.0,
-    seed: int = 42,
+    eval_movies: Optional[Iterable[str]] = None,
     target_field: str = "caption_pre",
 ) -> Dict[str, object]:
     """Write train_manifest.jsonl and eval_manifest.jsonl.
 
-    ``eval_ratio=0`` (default) puts every sample in train and writes an
-    empty eval file. ``eval_ratio>0`` holds out that fraction for eval.
+    Without ``eval_movies`` (default) every sample goes to train and the
+    eval file is empty. With ``eval_movies``, every shot of those movies
+    goes to eval and all other movies to train.
     """
-    if not 0.0 <= eval_ratio < 1.0:
-        raise ValueError(f"eval_ratio must be in [0, 1), got {eval_ratio}")
+    held_out = set(eval_movies or [])
+    missing = sorted(m for m in held_out if not (ann_root / m).is_dir())
+    if missing:
+        print(f"[warning] Eval movies not found under {ann_root}: {missing}", flush=True)
 
     records, counts = collect_records(ann_root, target_field=target_field)
-    random.seed(seed)
-    random.shuffle(records)
-
-    if eval_ratio > 0 and records:
-        n_eval = max(1, int(len(records) * eval_ratio))
-        eval_records = records[:n_eval]
-        train_records = records[n_eval:]
-    else:
-        eval_records = []
-        train_records = records
+    eval_records = [r for r in records if r["movie"] in held_out]
+    train_records = [r for r in records if r["movie"] not in held_out]
 
     train_path = output_dir / "train_manifest.jsonl"
     eval_path = output_dir / "eval_manifest.jsonl"
@@ -112,9 +105,10 @@ def build_manifests(
         "valid": len(records),
         "train": len(train_records),
         "eval": len(eval_records),
+        "train_movies": len({r["movie"] for r in train_records}),
+        "eval_movies": len({r["movie"] for r in eval_records}),
         "train_path": str(train_path),
         "eval_path": str(eval_path),
-        "eval_ratio": eval_ratio,
     }
     return summary
 

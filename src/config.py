@@ -37,6 +37,26 @@ LORA_PRESETS = {
 # HF model repo holding one adapter subfolder per size (2b/, 4b/, 8b/).
 LORA_HF_REPO = "momentslab/beyond-anonymous-captions"
 
+# Movies held out for evaluation with ``train.py --eval`` (movie-level split:
+# every shot of these movies goes to eval, all other training movies to train).
+EVAL_MOVIES = [
+    "0004_Charade",
+    "0005_Chinatown",
+    "0013_Halloween",
+    "0020_Raising_Arizona",
+    "0028_The_Crying_Game",
+    "0029_The_Graduate",
+    "0031_The_Lost_Weekend",
+    "1002_Harry_Potter_and_the_Half-Blood_Prince",
+    "1018_Body_Of_Lies",
+    "1044_Pride_And_Prejudice_Disk_Two",
+    "3014_CAPTAIN_AMERICA",
+    "3043_KATY_PERRY_PART_OF_ME",
+    "3046_LARRY_CROWNE",
+    "3075_THE_SITTER",
+    "3088_WHATS_YOUR_NUMBER",
+]
+
 # Default LoRA fine-tune (combin_2): lr=5e-5, r=16, α=32, 1 epoch.
 FINETUNE_LORA = {
     "r": 16,

@@ -3,12 +3,13 @@
 BAC LoRA fine-tuning — Qwen3-VL 2b/4b/8b on identity captions.
 
 Default: train on the full train split for 1 epoch, no eval.
+With --eval: hold out the movies in config.EVAL_MOVIES (movie-level split).
 Hyperparams (combin_2): lr=5e-5, r=16, α=32, dropout=0.05.
 
 Usage:
     python3 scripts/train.py --size 2b
     python3 scripts/train.py --size 8b
-    python3 scripts/train.py --size 4b --eval --eval_ratio 0.1
+    python3 scripts/train.py --size 4b --eval
     python3 scripts/train.py --size 2b --lr 3e-5 --lora_r 8 --lora_alpha 16 --eval
     python3 scripts/train.py --size 2b --max_steps 20
 """
@@ -41,6 +42,7 @@ if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
 
 from config import (  # noqa: E402
+    EVAL_MOVIES,
     FINETUNE_LORA,
     FINETUNE_TRAINING,
     MAX_IMAGE_PIXELS,
@@ -74,7 +76,7 @@ def parse_args() -> argparse.Namespace:
         epilog="""
 examples:
   python3 scripts/train.py --size 2b
-  python3 scripts/train.py --size 8b --eval --eval_ratio 0.1
+  python3 scripts/train.py --size 8b --eval
   python3 scripts/train.py --size 4b --lr 3e-5 --lora_r 8 --lora_alpha 16 --eval
   python3 scripts/train.py --size 2b --max_steps 20
 """,
@@ -91,11 +93,7 @@ examples:
     p.add_argument("--manifest_eval", type=Path, default=MANIFEST_EVAL)
 
     p.add_argument("--eval", action="store_true",
-                   help="Run eval during training (needs a non-empty eval split)")
-    p.add_argument("--eval_ratio", type=float, default=0.0,
-                   help="Hold out this fraction of train as eval and enable --eval")
-    p.add_argument("--prepare", action="store_true",
-                   help="Rebuild manifests before training")
+                   help="Hold out the movies in config.EVAL_MOVIES for eval and keep the best checkpoint")
 
     p.add_argument("--lr", "--learning_rate", dest="learning_rate",
                    type=float, default=FINETUNE_TRAINING["learning_rate"])
@@ -218,22 +216,21 @@ def _plot_loss_curves(log_history, output_dir: Path, title: str):
         print(f"[warning] Could not generate loss plot: {exc}", flush=True)
 
 
-def _ensure_manifests(args: argparse.Namespace) -> None:
-    need_rebuild = (
-        args.prepare
-        or args.eval_ratio > 0
-        or not args.manifest_train.exists()
-    )
-    if not need_rebuild:
-        return
+def _build_manifests(args: argparse.Namespace) -> None:
+    """Rebuild the manifests on every run so the split always matches --eval."""
     print("Building manifests...", flush=True)
     summary = build_manifests(
         ann_root=args.ann_root,
         output_dir=args.manifest_train.parent,
-        eval_ratio=args.eval_ratio,
-        seed=args.seed,
+        eval_movies=EVAL_MOVIES if args.eval else None,
     )
     print(json.dumps(summary, indent=2), flush=True)
+    if summary["train"] == 0:
+        raise SystemExit(
+            f"No training shots with extracted frames under {args.ann_root} "
+            f"({summary['skipped_no_frames']} shots have no frames/). Extract them first:\n"
+            "  python3 src/extract_shot_frames.py --split train --videos-root ./data/videos/"
+        )
 
 
 def _maybe_eval_dataset(args, processor, use_eval: bool):
@@ -244,9 +241,8 @@ def _maybe_eval_dataset(args, processor, use_eval: bool):
                   "training without evaluation.", flush=True)
         return None
     if n_eval == 0:
-        print("Eval requested but eval_manifest is empty. Training without eval.\n"
-              "  To hold out a split:  python3 scripts/train.py --size "
-              f"{args.size} --eval --eval_ratio 0.1", flush=True)
+        print("Eval requested but the eval movies have no shots with extracted frames. "
+              "Training without eval.", flush=True)
         return None
     return GroundedCaptionDataset(
         DatasetConfig(
@@ -264,10 +260,10 @@ def _maybe_eval_dataset(args, processor, use_eval: bool):
 
 def main() -> int:
     args = parse_args()
-    use_eval = bool(args.eval or args.eval_ratio > 0)
+    use_eval = bool(args.eval)
     set_seed(args.seed)
 
-    _ensure_manifests(args)
+    _build_manifests(args)
 
     preset = MODEL_PRESETS[args.size]
     model_path = args.model or preset["model"]
@@ -280,7 +276,7 @@ def main() -> int:
         "model": model_path,
         "output_dir": str(output_dir),
         "eval": use_eval,
-        "eval_ratio": args.eval_ratio,
+        "eval_movies": EVAL_MOVIES if use_eval else [],
         "lora": {
             "r": args.lora_r,
             "alpha": args.lora_alpha,
