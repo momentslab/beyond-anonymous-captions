@@ -322,7 +322,9 @@ To optimize the hyperparameters, add `--eval`:
 python3 scripts/train.py --size 2b --eval
 ```
 
-`--eval` splits the training set **at the movie level**: every shot of the 15 movies listed in `EVAL_MOVIES` (`src/config.py`) goes to evaluation (1,507 shots), and the other 57 movies stay in training (30,428 shots). No movie appears on both sides. Evaluation runs every 20 steps up to step 100, then every `--eval_steps` (default 200), and the checkpoint with the lowest eval loss is kept in `best/`.
+`--eval` splits the training set **at the movie level**: the 15 movies listed in `EVAL_MOVIES` (`src/config.py`, 1,507 shots in total) are used for evaluation, and the other 57 movies stay in training (30,428 shots). No movie appears in both.
+
+During training, the model is evaluated on these 15 movies every 20 steps up to step 100, then every `--eval_steps` steps (default 200). The checkpoint with the lowest eval loss is saved in `best/`.
 
 Override any default on the command line and compare eval losses, for example:
 
