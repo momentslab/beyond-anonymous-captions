@@ -370,7 +370,7 @@ Outputs go to `models/finetune/{size}/` (change with `--output_dir`):
 - `best/`: the best checkpoint by eval loss (only with `--eval`)
 - `loss_curves.png`, `train_log_history.json`, `train_config.json`, `logs/` (TensorBoard)
 
-### Use your trained adapter
+### Use your trained adapter on the BAC benchmark
 
 ```bash
 python3 scripts/run.py cap --size 8b --lora models/finetune/8b/final --visualize
