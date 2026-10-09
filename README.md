@@ -30,7 +30,7 @@
 
 **Identity mapping:** $\color{green}\textbf{P1}$ ↔ $\color{green}\text{J. K. Simmons}$ · $\color{magenta}\textbf{P2}$ ↔ $\color{magenta}\text{Elliot Page}$ · $\color{blue}\textbf{P3}$ ↔ $\color{blue}\text{Olivia Thirlby}$ · $\color[RGB]{230,126,34}\textbf{P4}$ ↔ $\color[RGB]{230,126,34}\text{Allison Janney}$
 
-**Caption:** $\color{blue}\text{Olivia Thirlby}$, in a light blue top, pushes $\color{magenta}\text{Elliot Page}$, wearing a striped green and black shirt, in a wheelchair down a hospital hallway, while $\color[RGB]{230,126,34}\text{Allison Janney}$, in a dark jacket, follows behind them and $\color{green}\text{J. K. Simmons}$, in a plaid shirt, holds a girl's hand.
+**Caption:** $\color{blue}\text{Olivia Thirlby}$, in a light blue top, pushes $\color{magenta}\text{Elliot Page}$, wearing a striped green and black shirt, in a wheelchair down a hospital hallway, while $\color[RGB]{230,126,34}\text{Allison Janney}$ follows behind them and $\color{green}\text{J. K. Simmons}$, in a plaid shirt, holds a girl's hand.
 
 **Person-centric QA:**
 
