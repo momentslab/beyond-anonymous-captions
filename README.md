@@ -25,7 +25,26 @@
 - **Question answering:** answers questions about *who* is doing *what* in the shot.
 
 <p align="center">
-  <img src="assets/bac_example.jpg" alt="8 sampled frames of a shot with identity-grounded face boxes P1, P2 and P3" width="100%">
+  <img src="assets/bac_example_6.jpg" alt="8 sampled frames of a shot with identity-grounded face boxes P1 to P4" width="100%">
+</p>
+
+**Identity mapping:** $\color{green}\textbf{P1}$ ↔ $\color{green}\text{J. K. Simmons}$ · $\color{magenta}\textbf{P2}$ ↔ $\color{magenta}\text{Elliot Page}$ · $\color{blue}\textbf{P3}$ ↔ $\color{blue}\text{Olivia Thirlby}$ · $\color{orange}\textbf{P4}$ ↔ $\color{orange}\text{Allison Janney}$
+
+**Caption:** $\color{blue}\text{Olivia Thirlby}$, in a light blue top, pushes $\color{magenta}\text{Elliot Page}$, wearing a striped green and black shirt, down a hospital hallway in a wheelchair, while $\color{green}\text{J. K. Simmons}$, in a plaid shirt, and $\color{orange}\text{Allison Janney}$, in a dark jacket, follow behind them.
+
+**Person-centric QA:**
+
+| Question | Type | Ground truth |
+|---|---|---|
+| *Who pushes* $\color{magenta}\text{Elliot Page}$ *down the hospital hallway in a wheelchair?* | Interaction | $\color{blue}\text{Olivia Thirlby}$ (P3) |
+| *Who is holding a girl’s hand?* | Interaction | $\color{green}\text{J. K. Simmons}$ (P1) |
+| *Who is in the wheelchair?* | Position | $\color{magenta}\text{Elliot Page}$ (P2) |
+| *Who follows behind* $\color{blue}\text{Olivia Thirlby}$ *and* $\color{magenta}\text{Elliot Page?}$ | Position | $\color{orange}\text{Allison Janney}$ (P4) |
+
+<!-- Alternative overview example (example 63). To use it instead, swap it with the example-6 block above.
+
+<p align="center">
+  <img src="assets/bac_example_63.jpg" alt="8 sampled frames of a shot with identity-grounded face boxes P1, P2 and P3" width="100%">
 </p>
 
 **Identity mapping:** $\color{green}\textbf{P1}$ ↔ $\color{green}\text{Cam Gigandet}$ · $\color{magenta}\textbf{P2}$ ↔ $\color{magenta}\text{Minka Kelly}$ · $\color{blue}\textbf{P3}$ ↔ $\color{blue}\text{Leighton Meester}$
@@ -40,6 +59,8 @@
 | *Who is kissing* $\color{magenta}\text{Minka Kelly?}$ | Interaction | $\color{green}\text{Cam Gigandet}$ |
 | *Who is wearing a green shirt?* | Appearance | $\color{green}\text{Cam Gigandet}$ |
 | *Who is wearing a red top?* | Appearance | $\color{magenta}\text{Minka Kelly}$ |
+
+-->
 
 ## Release contents
 
