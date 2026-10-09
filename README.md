@@ -232,7 +232,7 @@ Output: one video per clip at `output/videos/clip_faces/{MOVIE}/{clip}_bbox.mp4`
 | `movie`, `source_clip`, `dataset`, `video` | Source identifiers (`dataset` = `lsmdc` or `mpiimd`) |
 | `shot_index`, `shot_start_second`, `shot_end_second` | Shot position inside the clip |
 | `fps`, `frame_width`, `frame_height`, `total_video_frames` | Source video metadata |
-| `caption` | Caption naming every identified person |
+| `caption` | Caption naming every identified person (manually verified in the benchmark) |
 | `questions[]` | *Benchmark only.* `id`, `type`, `question`, `answer` |
 | `frames[]` | `frame_order`, `frame_index`, `timestamp`, `persons[]` → `actor`, `character`, `bbox` (face, `[x1, y1, x2, y2]` px), `track_id`, `score` |
 
