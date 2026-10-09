@@ -275,7 +275,7 @@ Outputs are written per shot as `result_caption_coord_face.json` / `result_ident
 | `4b` | [`Qwen/Qwen3-VL-4B-Instruct`](https://huggingface.co/Qwen/Qwen3-VL-4B-Instruct) |
 | `8b` | [`Qwen/Qwen3-VL-8B-Instruct`](https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct) |
 
-The base weights are downloaded from Hugging Face and kept frozen; only the small LoRA adapter is trained. Training uses the shots whose frames were extracted in step 4; the training manifests are rebuilt from `data/shot_captions/train` on every run.
+The base weights are downloaded from Hugging Face and kept frozen. Only small **LoRA adapters on the language model (LLM)** are trained (attention and MLP projections of every LLM layer); the **vision encoder** and the **vision-language connector** (projector) stay frozen. Training uses the shots whose frames were extracted in step 4; the training manifests are rebuilt from `data/shot_captions/train` on every run.
 
 ### Train with the default hyperparameters
 
@@ -287,7 +287,7 @@ This trains on all 72 training movies (31,935 shots) with the default hyperparam
 
 | | |
 |---|---|
-| LoRA | r = 16, α = 32, dropout = 0.05, all attention + MLP projections |
+| LoRA | r = 16, α = 32, dropout = 0.05, attention + MLP projections of the LLM only (vision encoder and connector frozen) |
 | Optimizer | AdamW, lr = 5e-5, cosine, warmup 3 %, grad-clip 1.0 |
 | Batch | 1 × 8 grad-accum, bf16, gradient checkpointing |
 | Schedule | 1 epoch, seed 42 |
