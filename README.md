@@ -275,21 +275,15 @@ Outputs are written per shot as `result_caption_coord_face.json` / `result_ident
 | `4b` | [`Qwen/Qwen3-VL-4B-Instruct`](https://huggingface.co/Qwen/Qwen3-VL-4B-Instruct) |
 | `8b` | [`Qwen/Qwen3-VL-8B-Instruct`](https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct) |
 
-The base weights are downloaded from Hugging Face and kept frozen; only the small LoRA adapter is trained.
+The base weights are downloaded from Hugging Face and kept frozen; only the small LoRA adapter is trained. Training uses the shots whose frames were extracted in step 4; the training manifests are rebuilt from `data/shot_captions/train` on every run.
+
+### Train with the default hyperparameters
 
 ```bash
 python3 scripts/train.py --size 8b
 ```
 
-To evaluate during training and keep the best checkpoint, add `--eval`:
-
-```bash
-python3 scripts/train.py --size 2b --eval
-```
-
-`--eval` splits the training set **at the movie level**: every shot of the 15 movies listed in `EVAL_MOVIES` (`src/config.py`) goes to evaluation (1,507 shots), and the other 57 movies stay in training (30,428 shots). No movie appears on both sides. Evaluation runs every 20 steps up to step 100, then every `--eval_steps` (default 200). Without `--eval`, all 72 training movies are used for training.
-
-Training manifests are rebuilt from `data/shot_captions/train` on every run, from the shots whose frames were extracted in step 4. Default hyperparameters (`src/config.py`):
+This trains on all 72 training movies (31,935 shots) with the default hyperparameters from `src/config.py`:
 
 | | |
 |---|---|
@@ -299,13 +293,33 @@ Training manifests are rebuilt from `data/shot_captions/train` on every run, fro
 | Schedule | 1 epoch, seed 42 |
 | Frames | 8 per shot, 131k–524k pixels per image |
 
+### Tune hyperparameters with evaluation
+
+To optimize the hyperparameters, add `--eval`:
+
+```bash
+python3 scripts/train.py --size 2b --eval
+```
+
+`--eval` splits the training set **at the movie level**: every shot of the 15 movies listed in `EVAL_MOVIES` (`src/config.py`) goes to evaluation (1,507 shots), and the other 57 movies stay in training (30,428 shots). No movie appears on both sides. Evaluation runs every 20 steps up to step 100, then every `--eval_steps` (default 200), and the checkpoint with the lowest eval loss is kept in `best/`.
+
+Override any default on the command line and compare eval losses, for example:
+
+```bash
+python3 scripts/train.py --size 2b --eval --lr 3e-5 --lora_r 8 --lora_alpha 16
+```
+
+Available flags: `--lr`, `--lora_r`, `--lora_alpha`, `--lora_dropout`, `--epochs`, `--batch_size`, `--grad_accum`, `--max_steps`, `--seed`, `--eval_steps`.
+
+### Outputs
+
 Outputs go to `models/finetune/{size}/` (change with `--output_dir`):
 
 - `final/`: the trained LoRA adapter and processor
 - `best/`: the best checkpoint by eval loss (only with `--eval`)
 - `loss_curves.png`, `train_log_history.json`, `train_config.json`, `logs/` (TensorBoard)
 
-Run inference with your own adapter:
+### Use your trained adapter
 
 ```bash
 python3 scripts/run.py cap --size 8b --lora models/finetune/8b/final --visualize
