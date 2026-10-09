@@ -36,9 +36,9 @@
 
 | Question | Type | Ground truth |
 |---|---|---|
+| *Who is in the wheelchair?* | Position | $\color{magenta}\text{Elliot Page}$ (P2) |
 | *Who pushes* $\color{magenta}\text{Elliot Page}$ *down the hospital hallway in a wheelchair?* | Interaction | $\color{blue}\text{Olivia Thirlby}$ (P3) |
 | *Who is holding a girl’s hand?* | Interaction | $\color{green}\text{J. K. Simmons}$ (P1) |
-| *Who is in the wheelchair?* | Position | $\color{magenta}\text{Elliot Page}$ (P2) |
 | *Who follows behind* $\color{blue}\text{Olivia Thirlby}$ *and* $\color{magenta}\text{Elliot Page?}$ | Position | $\color[RGB]{230,126,34}\text{Allison Janney}$ (P4) |
 
 <!-- Alternative overview example (example 63). To use it instead, swap it with the example-6 block above.
