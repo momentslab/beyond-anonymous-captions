@@ -248,7 +248,7 @@ All three adapters live in one repo, [`momentslab/beyond-anonymous-captions`](ht
 hf download momentslab/beyond-anonymous-captions --local-dir models/lora
 ```
 
-This puts the three adapters in `models/lora/2b/`, `models/lora/4b/` and `models/lora/8b/`. To get only one size, add `--include "8b/*"` (or `"2b/*"`, `"4b/*"`). You can also skip this step: `--lora auto` in `run.py` uses `models/lora/{size}` and downloads the adapter from the Hub if it's missing.
+This puts the three adapters in `models/lora/2b/`, `models/lora/4b/` and `models/lora/8b/`. To get only one size, add `--include "8b/*"` (or `"2b/*"`, `"4b/*"`). You can also skip this step: `--model bac` in `run.py` uses `models/lora/{size}` and downloads the adapter from the Hub if it's missing.
 
 To use an adapter directly in Python:
 
@@ -264,25 +264,53 @@ processor = AutoProcessor.from_pretrained(base_id)
 
 ## Inference
 
-Run on the BAC benchmark (`data/shot_captions/test`):
+Two models can be run on the BAC benchmark (`data/shot_captions/test`), selected with `--model`:
+
+| `--model` | Model |
+|---|---|
+| `bac` (default) | **BAC**: Qwen3-VL-{size}-Instruct fine-tuned with LoRA on the BAC training set, with the default hyperparameters (see [Training](#training)). The adapter is downloaded from Hugging Face automatically. |
+| `base` | **Base**: Qwen3-VL-{size}-Instruct as released, without LoRA (zero-shot). |
+
+### Captioning
+
+BAC model:
 
 ```bash
-python3 scripts/run.py cap --size 8b --lora auto --visualize
+python3 scripts/run.py cap --size 8b --model bac --visualize
 ```
 
+Base model:
+
 ```bash
-python3 scripts/run.py qa --size 8b --lora auto --visualize
+python3 scripts/run.py cap --size 8b --model base --visualize
 ```
+
+### Question answering
+
+BAC model:
+
+```bash
+python3 scripts/run.py qa --size 8b --model bac --visualize
+```
+
+Base model:
+
+```bash
+python3 scripts/run.py qa --size 8b --model base --visualize
+```
+
+### Options
 
 | Flag | Meaning |
 |---|---|
-| `qa` / `cap` | Task: identity QA or captioning |
-| `--size {2b,4b,8b}` | Qwen3-VL base size |
-| `--lora auto\|PATH` | `auto` = `models/lora/{size}`; omit for the zero-shot base model |
+| `cap` / `qa` | Task: captioning or question answering |
+| `--size {2b,4b,8b}` | Qwen3-VL model size |
+| `--model {bac,base}` | BAC (LoRA fine-tuned, default) or base Qwen3-VL Instruct |
+| `--lora PATH` | Your own trained adapter, e.g. `models/finetune/8b/final` (overrides `--model`) |
 | `--limit N` | First N shots only (quick test) |
 | `--resume` | Skip shots already done |
 | `--visualize` | Save annotated frames + sequence grid |
-| `--output_dir` | Default: `output/Qwen3_{size}[_lora]_{task}/test` |
+| `--output_dir` | Default: `output/{model}_{size}_{task}/test` (e.g. `output/bac_8b_cap/test`) |
 
 Outputs are written per shot as `result_caption_coord_face.json` / `result_identity_qa_coord_face.json`. QA accuracy is aggregated automatically.
 

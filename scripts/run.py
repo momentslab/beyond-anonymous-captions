@@ -2,13 +2,17 @@
 """
 BAC inference — identity QA or captioning, coord_face, Qwen 2b/4b/8b.
 
+Models (--model):
+    bac   Qwen3-VL-{size}-Instruct + the BAC LoRA adapter (default; downloaded from HF if missing)
+    base  Qwen3-VL-{size}-Instruct without LoRA (zero-shot)
+
 Usage:
-    python3 scripts/run.py qa  --size 2b --visualize  # base QA
-    python3 scripts/run.py qa  --size 8b --lora auto --visualize  # LoRA QA (default LoRA path)
-    python3 scripts/run.py qa  --size 4b --lora /path/to/adapter --visualize
-    python3 scripts/run.py cap --size 2b --visualize  # base captioning
-    python3 scripts/run.py cap --size 8b --lora auto --visualize  # LoRA captioning
-    python3 scripts/run.py qa  --size 2b --limit 5 --visualize  # quick test
+    python3 scripts/run.py cap --size 8b --model bac --visualize   # BAC captioning
+    python3 scripts/run.py cap --size 8b --model base --visualize  # base captioning
+    python3 scripts/run.py qa  --size 8b --model bac --visualize   # BAC QA
+    python3 scripts/run.py qa  --size 8b --model base --visualize  # base QA
+    python3 scripts/run.py qa  --size 8b --lora models/finetune/8b/final --visualize  # your own adapter
+    python3 scripts/run.py qa  --size 2b --limit 5 --visualize     # quick test
 """
 
 from __future__ import annotations
@@ -495,16 +499,19 @@ def main() -> int:
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""\
 examples:
-  python3 scripts/run.py qa  --size 2b --visualize
-  python3 scripts/run.py qa  --size 8b --lora auto --visualize
-  python3 scripts/run.py cap --size 4b --lora /path/to/adapter --visualize
-  python3 scripts/run.py qa  --size 2b --limit 5 --visualize""",
+  python3 scripts/run.py cap --size 8b --model bac --visualize
+  python3 scripts/run.py cap --size 8b --model base --visualize
+  python3 scripts/run.py qa  --size 8b --model bac --visualize
+  python3 scripts/run.py qa  --size 8b --model base --visualize
+  python3 scripts/run.py qa  --size 8b --lora models/finetune/8b/final --visualize""",
     )
     parser.add_argument("task", choices=["qa", "cap"], help="qa = question answering, cap = captioning")
     parser.add_argument("--size", choices=sorted(MODEL_PRESETS), default="2b", help="Model size (default: 2b)")
+    parser.add_argument("--model", choices=["bac", "base"], default="bac",
+                        help="bac = Qwen3-VL Instruct + BAC LoRA adapter (default); base = Qwen3-VL Instruct without LoRA")
     parser.add_argument("--lora", default=None,
-                        help="LoRA adapter: 'auto' for models/lora/{size} (downloaded from HF if missing), or explicit dir")
-    parser.add_argument("--model", default=None, help="Override HF model id")
+                        help="Your own LoRA adapter dir (e.g. models/finetune/8b/final); overrides --model")
+    parser.add_argument("--hf_model", default=None, help="Override the base HF model id")
     parser.add_argument("--output_dir", type=Path, default=None, help="Override output root")
     parser.add_argument("--batch_size", type=int, default=None)
     parser.add_argument("--max_new_tokens", type=int, default=None,
@@ -523,20 +530,27 @@ examples:
         print(f"Error: annotation dir not found: {ann_root}")
         return 1
 
-    lora_path = resolve_lora(args.lora, args.size)
+    if args.lora:
+        model_tag = "lora"
+        lora_path = resolve_lora(args.lora, args.size)
+    elif args.model == "bac":
+        model_tag = "bac"
+        lora_path = resolve_lora("auto", args.size)
+    else:
+        model_tag = "base"
+        lora_path = None
     if lora_path and not (lora_path / "adapter_config.json").exists():
         print(f"Error: LoRA adapter not found: {lora_path}")
         return 1
 
     preset = MODEL_PRESETS[args.size]
-    model_name = args.model or preset["model"]
+    model_name = args.hf_model or preset["model"]
     batch_size = args.batch_size or preset["batch_size"]
-    lora_tag = "_lora" if lora_path else ""
     task_tag = "qa" if args.task == "qa" else "cap"
     if args.output_dir:
         output_root = args.output_dir
     else:
-        output_root = PROJECT_ROOT / "output" / f"Qwen3_{args.size}{lora_tag}_{task_tag}" / "test"
+        output_root = PROJECT_ROOT / "output" / f"{model_tag}_{args.size}_{task_tag}" / "test"
 
     shots = discover_shots(ann_root)
     if args.limit:
@@ -545,7 +559,7 @@ examples:
     print("=" * 60)
     print(f"Task:       {args.task}")
     print(f"Size:       {args.size}")
-    print(f"Model:      {model_name}")
+    print(f"Model:      {model_tag} ({model_name})")
     if lora_path:
         print(f"LoRA:       {lora_path}")
     print(f"Output:     {output_root}")
