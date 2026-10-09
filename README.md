@@ -28,9 +28,9 @@
   <img src="assets/bac_example_6.jpg" alt="8 sampled frames of a shot with identity-grounded face boxes P1 to P4" width="100%">
 </p>
 
-**Identity mapping:** $\color{green}\textbf{P1}$ ↔ $\color{green}\text{J. K. Simmons}$ · $\color{magenta}\textbf{P2}$ ↔ $\color{magenta}\text{Elliot Page}$ · $\color{blue}\textbf{P3}$ ↔ $\color{blue}\text{Olivia Thirlby}$ · $\color{orange}\textbf{P4}$ ↔ $\color{orange}\text{Allison Janney}$
+**Identity mapping:** $\color{green}\textbf{P1}$ ↔ $\color{green}\text{J. K. Simmons}$ · $\color{magenta}\textbf{P2}$ ↔ $\color{magenta}\text{Elliot Page}$ · $\color{blue}\textbf{P3}$ ↔ $\color{blue}\text{Olivia Thirlby}$ · $\color[RGB]{230,126,34}\textbf{P4}$ ↔ $\color[RGB]{230,126,34}\text{Allison Janney}$
 
-**Caption:** $\color{blue}\text{Olivia Thirlby}$, in a light blue top, pushes $\color{magenta}\text{Elliot Page}$, wearing a striped green and black shirt, down a hospital hallway in a wheelchair, while $\color{green}\text{J. K. Simmons}$, in a plaid shirt, and $\color{orange}\text{Allison Janney}$, in a dark jacket, follow behind them.
+**Caption:** $\color{blue}\text{Olivia Thirlby}$, in a light blue top, pushes $\color{magenta}\text{Elliot Page}$, wearing a striped green and black shirt, down a hospital hallway in a wheelchair, while $\color{green}\text{J. K. Simmons}$, in a plaid shirt, and $\color[RGB]{230,126,34}\text{Allison Janney}$, in a dark jacket, follow behind them.
 
 **Person-centric QA:**
 
@@ -39,7 +39,7 @@
 | *Who pushes* $\color{magenta}\text{Elliot Page}$ *down the hospital hallway in a wheelchair?* | Interaction | $\color{blue}\text{Olivia Thirlby}$ (P3) |
 | *Who is holding a girl’s hand?* | Interaction | $\color{green}\text{J. K. Simmons}$ (P1) |
 | *Who is in the wheelchair?* | Position | $\color{magenta}\text{Elliot Page}$ (P2) |
-| *Who follows behind* $\color{blue}\text{Olivia Thirlby}$ *and* $\color{magenta}\text{Elliot Page?}$ | Position | $\color{orange}\text{Allison Janney}$ (P4) |
+| *Who follows behind* $\color{blue}\text{Olivia Thirlby}$ *and* $\color{magenta}\text{Elliot Page?}$ | Position | $\color[RGB]{230,126,34}\text{Allison Janney}$ (P4) |
 
 <!-- Alternative overview example (example 63). To use it instead, swap it with the example-6 block above.
 
