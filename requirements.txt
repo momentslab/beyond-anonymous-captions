@@ -5,7 +5,7 @@
 torch>=2.4
 torchvision>=0.19
 torchaudio>=2.4
-transformers>=4.45
+transformers>=4.57  # Qwen3-VL support
 accelerate>=1.0
 safetensors>=0.4
 huggingface_hub>=0.26
@@ -14,7 +14,7 @@ huggingface_hub>=0.26
 qwen-vl-utils>=0.0.10
 
 # ----- LoRA -----
-peft>=0.12
+peft>=0.17
 
 # ----- vision / data -----
 opencv-python-headless>=4.8
