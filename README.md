@@ -335,8 +335,6 @@ See the [paper](https://arxiv.org/abs/2610.10163) for captioning and question-an
 
 ## License & intended use
 
-**Research use only. Commercial use is not permitted.**
-
 - **Code, annotations and LoRA weights:** [CC BY-NC 4.0](LICENSE), released for non-commercial research.
 - **Source videos:** [LSMDC v2](https://sites.google.com/site/describingmovies/download/) (LSMDC + MPII-MD clips), under their original license agreements. Nothing from them is redistributed here.
 - **Base models:** [Qwen3-VL](https://huggingface.co/Qwen) (Apache-2.0).
